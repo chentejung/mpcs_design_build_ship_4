@@ -197,6 +197,13 @@ attribution and its required notice in the credits.
   (server-only — no `NEXT_PUBLIC_`), `TMDB_READ_ACCESS_TOKEN` (v4 Bearer), `UNDO_SIGNING_SECRET` (server-only).
   `.env.example` lists them without values.
 - Vercel imports the GitHub repo: `main` deploys to production, each PR gets a preview. The owner sets env vars there.
+  - **Green local tests don't mean the deploy works.** Tests read `.env.local`; Vercel reads only its dashboard. A
+    green Vercel check only means it built: env vars are read at request time.
+  - **A new env var** goes into `.env.example` and the Env list above in the same PR. The PR body names it, and the
+    owner is asked to set it in Vercel for Production and Preview and redeploy **before** the PR merges.
+  - **A preview counts as checked** only when the ticket's flows pass on it **signed in** (test user A, through the
+    owner's Vercel Share link — previews are behind Deployment Protection), not just signed out. Report exactly what
+    was and wasn't checked there.
 - One feature branch + PR per ticket, merged after tests pass and the preview looks right. The tickets are the
   sub-issues of spec #1 on GitHub, with native blocked-by links; work any ticket whose blockers are all closed.
   Each slice carries its own Undo and error handling, using the shared toast built in #7.
