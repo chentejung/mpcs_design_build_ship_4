@@ -17,6 +17,7 @@ import { FilmCard } from "@/components/system/film-card";
 import { EmptyState } from "@/components/system/motifs";
 import { clearAbandonedSave, takePendingSave, useAskToSave, type PendingSave } from "./save-after-sign-in";
 import { useToasts } from "./toasts";
+import { alreadyInThisMonth, changeDone, changeFailed } from "@/lib/toast-messages";
 
 const GRID = "grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5";
 
@@ -51,12 +52,12 @@ export function BrowseResults({ state, first, saved, genreNames }: {
       try {
         const result = await saveFilm(f.id);
         if (result.status === "saved")
-          toasts.changed(`Saved ${f.title} to this month’s list.`, { kind: "delete-entry", entryId: result.entryId }, () => {
+          toasts.changed(changeDone("save", f.title), { kind: "delete-entry", entryId: result.entryId }, () => {
             setSaved({ id: f.id, on: false });
           });
-        else toasts.changed(`${f.title} is already in this month’s list.`, null);
+        else toasts.changed(alreadyInThisMonth(f.title), null);
       } catch {
-        toasts.failed(`Couldn’t save ${f.title}. Try again.`);
+        toasts.failed(changeFailed("save", f.title));
       }
     });
 

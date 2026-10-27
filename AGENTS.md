@@ -199,6 +199,8 @@ attribution and its required notice in the credits.
 - Vercel imports the GitHub repo: `main` deploys to production, each PR gets a preview. The owner sets env vars there.
   - **Green local tests don't mean the deploy works.** Tests read `.env.local`; Vercel reads only its dashboard. A
     green Vercel check only means it built: env vars are read at request time.
+  - **Build-time env check:** on Vercel only (`VERCEL` set), `next.config.ts` fails the build naming every Env var
+    above that is missing (`lib/required-env.ts`); it checks presence, not values, and does nothing locally or in tests.
   - **A new env var** goes into `.env.example` and the Env list above in the same PR. The PR body names it, and the
     owner is asked to set it in Vercel for Production and Preview and redeploy **before** the PR merges.
   - **A preview counts as checked** only when the ticket's flows pass on it **signed in** (test user A, through the

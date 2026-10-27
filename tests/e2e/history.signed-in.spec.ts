@@ -8,6 +8,7 @@ import {
   andWaitForServer, card, clearThisMonth, entry, expectListCount, expectTotals, listRows, notice, saveFromBrowse, sectionRows, signIn,
   skipWithoutTestUsers, undoButton, USER_A, visit, watchedSwitch,
 } from "./signed-in";
+import { expectFitsWidth, PHONE_WIDTHS } from "./checks";
 
 const SEPTEMBER = ["The Matrix", "Pulp Fiction", "The Godfather", "Spirited Away", "Clayface"]; // in the order added
 const NOT_WATCHED = ["Pulp Fiction", "The Godfather", "Clayface"];
@@ -16,7 +17,7 @@ const months = (page: Page) => page.getByRole("region", { name: /^[A-Z][a-z]+ \d
 const month = (page: Page, name: string) => page.getByRole("region", { name, exact: true });
 const pastEntry = (page: Page, title: string) =>
   months(page).getByRole("listitem").filter({ has: page.getByRole("heading", { name: title, exact: true }) });
-const addButton = (page: Page, title: string) => pastEntry(page, title).getByRole("button", { name: `Add ${title} to this month` });
+const addButton = (page: Page, title: string) => pastEntry(page, title).getByRole("button", { name: `Add it to this month: ${title}`, exact: true });
 
 test.beforeEach(async ({ page }) => {
   skipWithoutTestUsers();
@@ -35,7 +36,7 @@ test("past months are listed newest first with their planned and watched counts,
   // Past months can't be edited: no Watched toggle, no Remove. Only the films not watched yet can be added again.
   await expect(september.getByRole("switch")).toHaveCount(0);
   await expect(september.getByRole("button", { name: /^Remove / })).toHaveCount(0);
-  await expect(september.getByRole("button", { name: /to this month$/ })).toHaveCount(NOT_WATCHED.length);
+  await expect(september.getByRole("button", { name: /^Add it to this month: / })).toHaveCount(NOT_WATCHED.length);
   for (const title of NOT_WATCHED) await expect(addButton(page, title)).toBeVisible();
   await expect(pastEntry(page, "The Matrix")).toContainText("Watched Sep 12");
 });
@@ -151,4 +152,16 @@ test("on Browse, a film from a past month's list says which month", async ({ pag
   await expect(card(page, "Clayface")).toContainText("In your Sep 2026 list");
   await expect(page.getByRole("list", { name: "Films" }).getByText(/^In your .* list$/)).toHaveCount(1);
   await expect(card(page, "Buddy")).not.toContainText("In your");
+});
+
+// Phone layouts, as tests/e2e/layout.spec.ts checks the signed-out pages: History, filtered or not, and its empty
+// state keep to the screen with nothing running into anything else. Signed in, so it runs here on the desktop project.
+test("on phones History keeps to the screen, with its filters, rows and empty state apart", async ({ page }) => {
+  await saveFromBrowse(page, ["Clayface"]); // one row Already saved, the rest with Add it to this month
+  for (const url of ["/my-list/history", "/my-list/history?month=2026-09&q=god", "/my-list/history?q=zqxjvwk"]) {
+    await visit(page, url);
+    await expect(months(page).or(page.getByText("No films here!")).first()).toBeVisible();
+    for (const width of PHONE_WIDTHS) await expectFitsWidth(page, width, url);
+    await page.setViewportSize({ width: 1280, height: 720 });
+  }
 });

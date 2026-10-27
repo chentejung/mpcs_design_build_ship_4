@@ -4,7 +4,7 @@
 // the write fails, and the shared toast offers a 3-second Undo that writes the previous state back: the previous
 // watched date, or the very same Entry from the copy the server signed (lib/my-list.ts has the rules).
 import Link from "next/link";
-import { startTransition, useId, useOptimistic } from "react";
+import { Fragment, startTransition, useId, useOptimistic } from "react";
 import { markWatched, removeEntry } from "@/app/actions/entries";
 import { Button, buttonClass, Check, Select, Toggle } from "@/components/system/controls";
 import { FilmCard, formatRuntime } from "@/components/system/film-card";
@@ -17,6 +17,7 @@ import {
 } from "@/lib/my-list";
 import { useListSettings } from "./list-settings";
 import { useToasts } from "./toasts";
+import { changeDone, changeFailed } from "@/lib/toast-messages";
 
 const GRID = "grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5";
 
@@ -39,12 +40,12 @@ export function ThisMonthList({ month, entries, genreNames, timeZone }: {
       try {
         await markWatched(e.id, mark.watchedAt !== null);
         toasts.changed(
-          mark.watchedAt ? `Marked ${e.title} watched.` : `Moved ${e.title} back to Not watched yet.`,
+          changeDone(mark.watchedAt ? "watch" : "unwatch", e.title),
           { kind: "set-watched", entryId: e.id, watchedAt: e.watchedAt },
           () => change(back),
         );
       } catch {
-        toasts.failed(mark.watchedAt ? `Couldn’t mark ${e.title} watched. Try again.` : `Couldn’t unmark ${e.title}. Try again.`);
+        toasts.failed(changeFailed(mark.watchedAt ? "watch" : "unwatch", e.title));
       }
     });
 
@@ -57,9 +58,9 @@ export function ThisMonthList({ month, entries, genreNames, timeZone }: {
       try {
         const removed = await removeEntry(e.id);
         if (removed)
-          toasts.changed(`Removed ${e.title} from this month’s list.`, { kind: "reinsert-entry", token: removed.token }, () => change(back));
+          toasts.changed(changeDone("remove", e.title), { kind: "reinsert-entry", token: removed.token }, () => change(back));
       } catch {
-        toasts.failed(`Couldn’t remove ${e.title}. Try again.`);
+        toasts.failed(changeFailed("remove", e.title));
       }
     });
 
@@ -128,7 +129,12 @@ export function ThisMonthList({ month, entries, genreNames, timeZone }: {
 
   return (
     <>
-      <p className="ds-label ds-rule mt-6 pt-4">{monthHeader(month, shown)}</p>
+      <p className="ds-label ds-rule mt-6 pt-4">
+        {/* On a phone the line wraps at its dots, never inside a part ("2h 0m to go" stays whole). */}
+        {monthHeader(month, shown).split(" · ").map((part, i) => (
+          <Fragment key={i}>{i > 0 && " · "}<span className="whitespace-nowrap">{part}</span></Fragment>
+        ))}
+      </p>
       {shown.length === 0 ? (
         <div className="mt-8">
           <EmptyState title="Nothing saved yet!" action={<Link href="/" className={buttonClass("primary")}>Browse films</Link>}>

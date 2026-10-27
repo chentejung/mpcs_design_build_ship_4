@@ -14,6 +14,7 @@ import { monthLong } from "@/lib/month";
 import type { ListEntry } from "@/lib/my-list";
 import { AlreadySaved } from "./browse-results";
 import { useToasts } from "./toasts";
+import { alreadyInThisMonth, changeDone, changeFailed } from "@/lib/toast-messages";
 
 export type HistoryMonth = MonthTotals & { entries: ListEntry[] };
 
@@ -37,12 +38,12 @@ export function HistoryList({ months, saved, genreNames, timeZone }: {
       try {
         const result = await addToThisMonth(e.id);
         if (result.status === "saved")
-          toasts.changed(`Added ${e.title} to this month’s list.`, { kind: "delete-entry", entryId: result.entryId }, () => {
+          toasts.changed(changeDone("add", e.title), { kind: "delete-entry", entryId: result.entryId }, () => {
             setSaved({ id: e.tmdbId, on: false });
           });
-        else toasts.changed(`${e.title} is already in this month’s list.`, null);
+        else toasts.changed(alreadyInThisMonth(e.title), null);
       } catch {
-        toasts.failed(`Couldn’t add ${e.title} to this month. Try again.`);
+        toasts.failed(changeFailed("add", e.title));
       }
     });
 
@@ -67,7 +68,7 @@ export function HistoryList({ months, saved, genreNames, timeZone }: {
           {savedNow.includes(e.tmdbId) ? (
             <AlreadySaved />
           ) : (
-            <Button variant="secondary" icon="save" aria-label={`Add ${e.title} to this month`} onClick={() => add(e)}>Add it to this month</Button>
+            <Button variant="secondary" icon="save" aria-label={`Add it to this month: ${e.title}`} onClick={() => add(e)}>Add it to this month</Button>
           )}
         </div>
       )}
