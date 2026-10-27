@@ -1,0 +1,6 @@
+# secrets: every env file except the committed template
+.env*
+!.env.example
+
+# the Week 2 source archive
+*.zip
