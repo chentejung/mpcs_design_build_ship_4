@@ -1,10 +1,11 @@
 "use client";
 // The film grid for a feed or a search: Load more adds the next 20 through a Server Action, synopses can be hidden, and Pulp's
 // placeholders stand in while films arrive. Signed in, each card offers Save, or Already saved once this month's list
-// has the Film; Save shows at once, and rolls back if the write fails.
+// has the Film; Save shows at once, and rolls back if the write fails. Signed out, Save opens the sign-in modal and
+// saves the Film once the visitor is back signed in (save-after-sign-in.ts).
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { startTransition, useId, useOptimistic, useState, useTransition } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { startTransition, useEffect, useId, useOptimistic, useState, useTransition } from "react";
 import { loadBrowsePage, type BrowsePage } from "@/app/actions/browse";
 import { saveFilm } from "@/app/actions/entries";
 import { browseHref, posterUrl, type BrowseState } from "@/lib/browse";
@@ -14,6 +15,7 @@ import { monthShortYear } from "@/lib/month";
 import { Button, buttonClass, Toggle } from "@/components/system/controls";
 import { FilmCard } from "@/components/system/film-card";
 import { EmptyState } from "@/components/system/motifs";
+import { clearAbandonedSave, takePendingSave, useAskToSave, type PendingSave } from "./save-after-sign-in";
 import { useToasts } from "./toasts";
 
 const GRID = "grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5";
@@ -37,8 +39,35 @@ export function BrowseResults({ state, first, saved, genreNames }: {
     ids && (on ? [...ids, id] : ids.filter((i) => i !== id)),
   );
   const toasts = useToasts();
+  const askToSave = useAskToSave();
+  const searchParams = useSearchParams();
 
   const { feed, genre, q } = state;
+
+  const save = (f: PendingSave) =>
+    startTransition(async () => {
+      setSaved({ id: f.id, on: true });
+      toasts.moveCount(1);
+      try {
+        const result = await saveFilm(f.id);
+        if (result.status === "saved")
+          toasts.changed(`Saved ${f.title} to this month’s list.`, { kind: "delete-entry", entryId: result.entryId }, () => {
+            setSaved({ id: f.id, on: false });
+          });
+        else toasts.changed(`${f.title} is already in this month’s list.`, null);
+      } catch {
+        toasts.failed(`Couldn’t save ${f.title}. Try again.`);
+      }
+    });
+
+  // Back from the sign-in a signed-out Save opened: save that Film now, no second click. Already saved answers as usual.
+  useEffect(clearAbandonedSave, []);
+  useEffect(() => {
+    if (saved === null) return;
+    const pending = takePendingSave();
+    if (pending) save(pending);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- runs when the session or the URL changes, not per render
+  }, [saved, searchParams]);
 
   if (films.length === 0)
     return q ? (
@@ -69,22 +98,6 @@ export function BrowseResults({ state, first, saved, genreNames }: {
       }
     });
 
-  const save = (f: Film) =>
-    startTransition(async () => {
-      setSaved({ id: f.id, on: true });
-      toasts.moveCount(1);
-      try {
-        const result = await saveFilm(f.id);
-        if (result.status === "saved")
-          toasts.changed(`Saved ${f.title} to this month’s list.`, { kind: "delete-entry", entryId: result.entryId }, () => {
-            setSaved({ id: f.id, on: false });
-          });
-        else toasts.changed(`${f.title} is already in this month’s list.`, null);
-      } catch {
-        toasts.failed(`Couldn’t save ${f.title}. Try again.`);
-      }
-    });
-
   return (
     <>
       <div className="mt-5 mb-6 flex flex-wrap items-center justify-between gap-4">
@@ -97,7 +110,7 @@ export function BrowseResults({ state, first, saved, genreNames }: {
             <FilmCard film={toCard(f, genreNames)} showSynopsis={showSynopses} action={
               <>
                 {lastListed[f.id] && <p className="ds-fine ds-muted mb-2">In your {monthShortYear(lastListed[f.id])} list</p>}
-                {savedNow?.includes(f.id) ? <AlreadySaved /> : <SaveButton title={f.title} onSave={savedNow && (() => save(f))} />}
+                {savedNow?.includes(f.id) ? <AlreadySaved /> : <SaveButton title={f.title} onSave={savedNow ? () => save(f) : () => askToSave(f)} />}
               </>
             } />
           </li>
@@ -126,9 +139,8 @@ function toCard(f: Film, genreNames: Record<number, string>) {
   };
 }
 
-// Signed out, Save does nothing yet: saving after sign-in arrives with #13.
-function SaveButton({ title, onSave }: { title: string; onSave: (() => void) | null }) {
-  return <Button block icon="save" aria-label={`Save ${title}`} onClick={onSave ?? undefined}>Save</Button>;
+function SaveButton({ title, onSave }: { title: string; onSave: () => void }) {
+  return <Button block icon="save" aria-label={`Save ${title}`} onClick={onSave}>Save</Button>;
 }
 
 // One Entry per Film per month: removing it is My List's job, which the hint says. aria-disabled rather than
