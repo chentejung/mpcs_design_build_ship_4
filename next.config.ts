@@ -1,4 +1,8 @@
 import type { NextConfig } from "next";
+import { checkRequiredEnv } from "./lib/required-env";
+
+// On Vercel only, fail the build if a required server variable is missing (lib/required-env.ts).
+checkRequiredEnv(process.env);
 
 // Server-rendered (not a static export): Clerk, Supabase and TMDB all run on the server.
 const nextConfig: NextConfig = {
