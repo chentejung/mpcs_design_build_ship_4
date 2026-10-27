@@ -6,7 +6,7 @@ export const SITE_NAME = "The Bijou";
 export function HeaderBar({ brand, action }: { brand: React.ReactNode; action?: React.ReactNode }) {
   return (
     <header className="ds-header">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-[5vw] py-3">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-[5vw] py-3">
         {brand}
         {action}
       </div>
