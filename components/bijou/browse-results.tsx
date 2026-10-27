@@ -1,11 +1,11 @@
 "use client";
-// The film grid: Load more adds the next 20 through a Server Action, synopses can be hidden, and Pulp's
+// The film grid for a feed or a search: Load more adds the next 20 through a Server Action, synopses can be hidden, and Pulp's
 // placeholders stand in while films arrive.
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import { loadFeedPage } from "@/app/actions/browse";
-import { browseHref, posterUrl, type Feed } from "@/lib/browse";
+import { loadBrowsePage } from "@/app/actions/browse";
+import { browseHref, posterUrl, type BrowseState } from "@/lib/browse";
 import { categoryFor } from "@/lib/categories";
 import type { FeedPage, Film } from "@/lib/films";
 import { Button, buttonClass, Toggle } from "@/components/system/controls";
@@ -14,9 +14,8 @@ import { EmptyState } from "@/components/system/motifs";
 
 const GRID = "grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5";
 
-export function BrowseResults({ feed, genre, first, genreNames }: {
-  feed: Feed;
-  genre: number | null;
+export function BrowseResults({ state, first, genreNames }: {
+  state: BrowseState;
   first: FeedPage;
   genreNames: Record<number, string>;
 }) {
@@ -26,8 +25,14 @@ export function BrowseResults({ feed, genre, first, genreNames }: {
   const [showSynopses, setShowSynopses] = useState(true);
   const [loading, startLoading] = useTransition();
 
+  const { feed, genre, q } = state;
+
   if (films.length === 0)
-    return (
+    return q ? (
+      <EmptyState title="No films here!" action={<Link href={browseHref({ feed, genre })} className={buttonClass("primary")}>Clear search</Link>}>
+        Nothing on TMDB matches &ldquo;{q}&rdquo;.
+      </EmptyState>
+    ) : (
       <EmptyState
         title="No films here!"
         action={<Link href={browseHref({ feed, genre: null })} className={buttonClass("primary")}>Show every genre</Link>}
@@ -39,7 +44,8 @@ export function BrowseResults({ feed, genre, first, genreNames }: {
   const loadMore = () =>
     startLoading(async () => {
       try {
-        const next = await loadFeedPage(feed, genre === null ? null : String(genre), page + 1);
+        const browse = { feed, ...(genre !== null && { genre: String(genre) }), ...(q && { q }) };
+        const next = await loadBrowsePage(browse, page + 1);
         // Popularity can shift between pages, so a film may turn up twice.
         setFilms((shown) => [...shown, ...next.films.filter((f) => !shown.some((s) => s.id === f.id))]);
         setPage(next.page);

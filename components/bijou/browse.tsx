@@ -1,9 +1,12 @@
-// Browse below the hero: feed tabs, genre chips and the results. Feed and genre live in the URL.
+// Browse below the hero: search, feed tabs, genre chips and the results, all kept in the URL. A search covers all of
+// TMDB, so the tabs and chips step aside while it is on; the feed and genre stay in the URL for Clear search.
+import Form from "next/form";
 import Link from "next/link";
 import { Suspense } from "react";
-import { browseHref, FEEDS, parseBrowseParams, type Feed, type SearchParams } from "@/lib/browse";
+import { browseHref, FEEDS, parseBrowseParams, type BrowseState, type Feed, type SearchParams } from "@/lib/browse";
 import { categoryByGenre } from "@/lib/categories";
-import { getFeedPage, getGenres, type Genre } from "@/lib/films";
+import { getFeedPage, getGenres, getSearchPage, type Genre } from "@/lib/films";
+import { buttonClass } from "@/components/system/controls";
 import { PulpGenreIcon } from "@/components/system/pulp/genre";
 import { BrowseResults, CardSkeletons, ProjectorJammed } from "./browse-results";
 
@@ -13,23 +16,45 @@ export async function Browse({ searchParams }: { searchParams: Promise<SearchPar
     console.error(error);
     return null;
   });
-  const { feed, genre } = parseBrowseParams(sp, genres?.map((g) => g.id) ?? []);
+  const state = parseBrowseParams(sp, genres?.map((g) => g.id) ?? []);
+  const { feed, genre, q } = state;
 
   return (
     <>
-      <nav aria-label="Feeds" className="ds-tabs mb-5">
-        {FEEDS.map((f) => (
-          <Link key={f.id} href={browseHref({ feed: f.id, genre })} aria-current={f.id === feed ? "page" : undefined} className="ds-tab">
-            {f.label}
-          </Link>
-        ))}
-      </nav>
-      {genres && <GenreChips genres={genres} feed={feed} selected={genre} />}
-      {/* Keyed, so each feed and genre shows the placeholders while its films arrive. */}
-      <Suspense key={`${feed}-${genre}`} fallback={<CardSkeletons />}>
-        {genres ? <FeedResults feed={feed} genre={genre} genres={genres} /> : <ProjectorJammed />}
+      <SearchForm state={state} />
+      {!q && (
+        <>
+          <nav aria-label="Feeds" className="ds-tabs mb-5">
+            {FEEDS.map((f) => (
+              <Link key={f.id} href={browseHref({ feed: f.id, genre })} aria-current={f.id === feed ? "page" : undefined} className="ds-tab">
+                {f.label}
+              </Link>
+            ))}
+          </nav>
+          {genres && <GenreChips genres={genres} feed={feed} selected={genre} />}
+        </>
+      )}
+      {/* Keyed, so each feed, genre and search shows the placeholders while its films arrive. */}
+      <Suspense key={`${feed}-${genre}-${q}`} fallback={<CardSkeletons />}>
+        {genres ? <FeedResults state={state} genres={genres} /> : <ProjectorJammed />}
       </Suspense>
     </>
+  );
+}
+
+function SearchForm({ state: { feed, genre, q } }: { state: BrowseState }) {
+  return (
+    <Form action="/" role="search" className="mb-6 flex max-w-2xl flex-wrap items-end gap-3">
+      <div className="min-w-0 flex-1 basis-64">
+        <label htmlFor="film-search" className="ds-label mb-2 block">Search films</label>
+        {/* Keyed by the search, so Clear search and Back empty or refill the box. */}
+        <input key={q ?? ""} id="film-search" name="q" type="search" defaultValue={q ?? ""} autoComplete="off" placeholder="Any title on TMDB" className="ds-input w-full" />
+      </div>
+      {feed !== "now-playing" && <input type="hidden" name="feed" value={feed} />}
+      {genre !== null && <input type="hidden" name="genre" value={genre} />}
+      <button type="submit" className={buttonClass("primary")}>Search</button>
+      {q && <Link href={browseHref({ feed, genre })} className={buttonClass("secondary")}>Clear search</Link>}
+    </Form>
   );
 }
 
@@ -51,11 +76,12 @@ function GenreChips({ genres, feed, selected }: { genres: Genre[]; feed: Feed; s
   );
 }
 
-async function FeedResults({ feed, genre, genres }: { feed: Feed; genre: number | null; genres: Genre[] }) {
-  const first = await getFeedPage(feed, genre, 1).catch((error) => {
+async function FeedResults({ state, genres }: { state: BrowseState; genres: Genre[] }) {
+  const { feed, genre, q } = state;
+  const first = await (q ? getSearchPage(q, 1) : getFeedPage(feed, genre, 1)).catch((error) => {
     console.error(error);
     return null;
   });
   if (!first) return <ProjectorJammed />;
-  return <BrowseResults feed={feed} genre={genre} first={first} genreNames={Object.fromEntries(genres.map((g) => [g.id, g.name]))} />;
+  return <BrowseResults state={state} first={first} genreNames={Object.fromEntries(genres.map((g) => [g.id, g.name]))} />;
 }
