@@ -539,7 +539,7 @@
     pointer-events: none;
     line-height: 1;
   }
-  .ds-card:has(.ds-btn[aria-pressed="true"]) .ds-saved-stamp {
+  .ds-card:has(.ds-btn:is([aria-pressed="true"], [data-saved])) .ds-saved-stamp {
     display: grid;
     animation: ds-stamp 0.3s cubic-bezier(0.3, 1.5, 0.5, 1) both;
   }
@@ -1031,12 +1031,50 @@
     border-top: 0;
   }
 
+  /* Already saved: the issue box stamped muted and punched flat into its block. It stays focusable (aria-disabled,
+     not disabled) so its hint is read, but it neither lifts on hover nor presses. */
+  .ds-btn[aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+  [data-system="pulp"] .ds-btn[aria-disabled="true"],
+  [data-system="pulp"] .ds-btn[aria-disabled="true"]:is(:hover, :active) {
+    --ds-depth: 2px;
+    --face: color-mix(in srgb, var(--ds-text) 7%, var(--ds-bg));
+    --side: var(--ds-muted);
+    --rule: var(--ds-muted);
+    color: var(--ds-muted);
+    translate: 3px 3px;
+  }
+  [data-system="pulp"] .ds-btn[aria-disabled="true"]:hover .ds-btn-icon {
+    rotate: 0deg;
+  }
+  /* A failed write: the caption in Hero Red. */
+  [data-system="pulp"] .ds-toast[data-tone="error"] {
+    background: var(--ds-accent);
+    color: var(--ds-on-accent);
+  }
+
 }
 
 @media (max-width: 639px) {
   [data-system="pulp"] .bijou-mobile-hide {
     display: none;
   }
+}
+
+/* The shared toast (components/bijou/toasts.tsx), pinned to the foot of the screen above the page. */
+.bijou-toasts {
+  position: fixed;
+  inset: auto 0 calc(16px + env(safe-area-inset-bottom)) 0;
+  z-index: 50;
+  display: grid;
+  justify-items: center;
+  padding: 0 16px;
+  pointer-events: none;
+}
+.bijou-toasts .ds-toast {
+  width: min(100%, 36rem);
+  pointer-events: auto;
 }
 
 /* Placeholder lines under a loading card's poster, pulsing with it. */

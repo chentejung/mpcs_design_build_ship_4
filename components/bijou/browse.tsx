@@ -1,11 +1,14 @@
 // Browse below the hero: search, feed tabs, genre chips and the results, all kept in the URL. A search covers all of
 // TMDB, so the tabs and chips step aside while it is on; the feed and genre stay in the URL for Clear search.
+import { auth } from "@clerk/nextjs/server";
 import Form from "next/form";
 import Link from "next/link";
 import { Suspense } from "react";
 import { browseHref, FEEDS, parseBrowseParams, type BrowseState, type Feed, type SearchParams } from "@/lib/browse";
 import { categoryByGenre } from "@/lib/categories";
+import { savedFilmIds } from "@/lib/entries";
 import { getFeedPage, getGenres, getSearchPage, type Genre } from "@/lib/films";
+import { thisMonth } from "@/lib/this-month";
 import { buttonClass } from "@/components/system/controls";
 import { PulpGenreIcon } from "@/components/system/pulp/genre";
 import { BrowseResults, CardSkeletons, ProjectorJammed } from "./browse-results";
@@ -78,10 +81,20 @@ function GenreChips({ genres, feed, selected }: { genres: Genre[]; feed: Feed; s
 
 async function FeedResults({ state, genres }: { state: BrowseState; genres: Genre[] }) {
   const { feed, genre, q } = state;
-  const first = await (q ? getSearchPage(q, 1) : getFeedPage(feed, genre, 1)).catch((error) => {
-    console.error(error);
-    return null;
-  });
+  const [first, saved] = await Promise.all([
+    (q ? getSearchPage(q, 1) : getFeedPage(feed, genre, 1)).catch((error) => {
+      console.error(error);
+      return null;
+    }),
+    savedThisMonth(),
+  ]);
   if (!first) return <ProjectorJammed />;
-  return <BrowseResults state={state} first={first} genreNames={Object.fromEntries(genres.map((g) => [g.id, g.name]))} />;
+  return <BrowseResults state={state} first={first} saved={saved} genreNames={Object.fromEntries(genres.map((g) => [g.id, g.name]))} />;
+}
+
+// The Films already in this month's list, for Already saved; null when signed out, so Save stays as it is.
+async function savedThisMonth(): Promise<number[] | null> {
+  const { userId } = await auth();
+  if (!userId) return null;
+  return savedFilmIds(await thisMonth());
 }

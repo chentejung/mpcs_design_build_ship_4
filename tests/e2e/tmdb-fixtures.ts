@@ -4,7 +4,7 @@ import path from "node:path";
 
 export const FIXTURES = path.join(process.cwd(), "tests/fixtures/tmdb");
 
-type Movie = { title: string; original_title: string; overview: string; genre_ids: number[] };
+type Movie = { id: number; title: string; original_title: string; overview: string; genre_ids: number[] };
 
 // The discover answer whose parameters include every given key=value (values as they appear in the file name);
 // unless a with_genres part is given, the one across every genre.

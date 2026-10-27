@@ -4,7 +4,7 @@ import { defineConfig, devices } from "@playwright/test";
 
 // Browser tests drive the built app (`next build && next start`): on port 3001 answering TMDB from fixtures, and on
 // port 3002 against live TMDB for the one smoke test. Signed-out pages and layout run on desktop and phone
-// (AGENTS.md → Testing); signed-in tests run on desktop only, one at a time, as the test users in .env.test.local
+// (AGENTS.md → Testing); signed-in tests (*signed-in.spec.ts) run on desktop only, one at a time, as the test users in .env.test.local
 // (scripts/create-test-users.mjs). Tests read .env.local too, for Clerk's keys and to check the TMDB token never
 // reaches the browser.
 loadEnvConfig(process.cwd());
@@ -24,6 +24,7 @@ export default defineConfig({
       testMatch: /signed-in\.spec/,
       dependencies: ["clerk setup"],
       fullyParallel: false,
+      workers: 1, // every signed-in spec shares test users A and B and their rows
       use: { ...devices["Desktop Firefox"] },
     },
     { name: "live", testMatch: /live\.spec/, use: { ...devices["Desktop Firefox"], baseURL: `http://localhost:${LIVE}` } },

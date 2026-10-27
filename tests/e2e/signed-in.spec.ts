@@ -23,7 +23,7 @@ test.beforeEach(async ({ page }) => {
 
 test("signed in, the tab bar shows My List for this month, and it opens", async ({ page }) => {
   await expect(page.getByRole("banner").getByRole("button", { name: "Sign in" })).toHaveCount(0);
-  await expect(myListTab(page)).toHaveText(/^My List · [A-Z][a-z]{2}$/);
+  await expect(myListTab(page)).toHaveText(/^My List · [A-Z][a-z]{2} \(\d+\)$/);
   await myListTab(page).click();
   await expect(page).toHaveURL("/my-list");
   await expect(myListTab(page)).toHaveAttribute("aria-current", "page");

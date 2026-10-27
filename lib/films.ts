@@ -65,3 +65,38 @@ export async function getSearchPage(q: string, page: number): Promise<FeedPage> 
   const list = await tmdbGet<TmdbList>("/3/search/movie", searchParams({ q, page }));
   return { films: list.results.map(toFilm), page: list.page, totalPages: Math.min(list.total_pages, MAX_PAGE) };
 }
+
+// An Entry's copy of a Film (AGENTS.md → Data model), from GET /3/movie/{id}, which adds the runtime.
+export type Snapshot = {
+  tmdb_id: number;
+  title: string;
+  original_title: string | null;
+  original_language: string | null;
+  release_year: number | null;
+  runtime: number | null;
+  poster_path: string | null;
+  genre_ids: number[];
+  overview: string | null;
+};
+
+type TmdbMovieDetails = {
+  id: number; title: string; original_title?: string; original_language?: string; release_date?: string;
+  runtime?: number | null; poster_path?: string | null; genres?: Genre[]; overview?: string;
+};
+
+export async function getSnapshot(tmdbId: number): Promise<Snapshot> {
+  "use cache";
+  cacheLife({ revalidate: HOUR });
+  const m = await tmdbGet<TmdbMovieDetails>(`/3/movie/${tmdbId}`);
+  return {
+    tmdb_id: m.id,
+    title: m.title,
+    original_title: m.original_title || null,
+    original_language: m.original_language || null,
+    release_year: m.release_date ? Number(m.release_date.slice(0, 4)) : null,
+    runtime: m.runtime || null, // TMDB answers 0 when it doesn't know
+    poster_path: m.poster_path?.startsWith("/") ? m.poster_path : null,
+    genre_ids: m.genres?.map((g) => g.id) ?? [],
+    overview: m.overview || null,
+  };
+}

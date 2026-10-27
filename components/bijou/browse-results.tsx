@@ -1,22 +1,27 @@
 "use client";
 // The film grid for a feed or a search: Load more adds the next 20 through a Server Action, synopses can be hidden, and Pulp's
-// placeholders stand in while films arrive.
+// placeholders stand in while films arrive. Signed in, each card offers Save, or Already saved once this month's list
+// has the Film; Save shows at once, and rolls back if the write fails.
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { startTransition, useId, useOptimistic, useState, useTransition } from "react";
 import { loadBrowsePage } from "@/app/actions/browse";
+import { saveFilm } from "@/app/actions/entries";
 import { browseHref, posterUrl, type BrowseState } from "@/lib/browse";
 import { categoryFor } from "@/lib/categories";
 import type { FeedPage, Film } from "@/lib/films";
 import { Button, buttonClass, Toggle } from "@/components/system/controls";
 import { FilmCard } from "@/components/system/film-card";
 import { EmptyState } from "@/components/system/motifs";
+import { useToasts } from "./toasts";
 
 const GRID = "grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5";
 
-export function BrowseResults({ state, first, genreNames }: {
+// `saved` is this month's TMDB ids, or null when signed out.
+export function BrowseResults({ state, first, saved, genreNames }: {
   state: BrowseState;
   first: FeedPage;
+  saved: number[] | null;
   genreNames: Record<number, string>;
 }) {
   const [films, setFilms] = useState(first.films);
@@ -24,6 +29,11 @@ export function BrowseResults({ state, first, genreNames }: {
   const [failed, setFailed] = useState(false);
   const [showSynopses, setShowSynopses] = useState(true);
   const [loading, startLoading] = useTransition();
+  // While a Save (or its Undo) is in flight, the card shows the result; the server's list takes over once it answers.
+  const [savedNow, setSaved] = useOptimistic(saved, (ids, { id, on }: { id: number; on: boolean }) =>
+    ids && (on ? [...ids, id] : ids.filter((i) => i !== id)),
+  );
+  const toasts = useToasts();
 
   const { feed, genre, q } = state;
 
@@ -55,6 +65,22 @@ export function BrowseResults({ state, first, genreNames }: {
       }
     });
 
+  const save = (f: Film) =>
+    startTransition(async () => {
+      setSaved({ id: f.id, on: true });
+      toasts.moveCount(1);
+      try {
+        const result = await saveFilm(f.id);
+        if (result.status === "saved")
+          toasts.changed(`Saved ${f.title} to this month’s list.`, { kind: "delete-entry", entryId: result.entryId }, () => {
+            setSaved({ id: f.id, on: false });
+          });
+        else toasts.changed(`${f.title} is already in this month’s list.`, null);
+      } catch {
+        toasts.failed(`Couldn’t save ${f.title}. Try again.`);
+      }
+    });
+
   return (
     <>
       <div className="mt-5 mb-6 flex flex-wrap items-center justify-between gap-4">
@@ -64,7 +90,9 @@ export function BrowseResults({ state, first, genreNames }: {
       <ul aria-label="Films" className={GRID}>
         {films.map((f) => (
           <li key={f.id}>
-            <FilmCard film={toCard(f, genreNames)} showSynopsis={showSynopses} action={<SaveButton title={f.title} />} />
+            <FilmCard film={toCard(f, genreNames)} showSynopsis={showSynopses} action={
+              savedNow?.includes(f.id) ? <AlreadySaved /> : <SaveButton title={f.title} onSave={savedNow && (() => save(f))} />
+            } />
           </li>
         ))}
       </ul>
@@ -91,9 +119,21 @@ function toCard(f: Film, genreNames: Record<number, string>) {
   };
 }
 
-// Saving arrives with #7.
-function SaveButton({ title }: { title: string }) {
-  return <Button block icon="save" aria-label={`Save ${title}`}>Save</Button>;
+// Signed out, Save does nothing yet: saving after sign-in arrives with #13.
+function SaveButton({ title, onSave }: { title: string; onSave: (() => void) | null }) {
+  return <Button block icon="save" aria-label={`Save ${title}`} onClick={onSave ?? undefined}>Save</Button>;
+}
+
+// One Entry per Film per month: removing it is My List's job, which the hint says. aria-disabled rather than
+// disabled, so it stays in the tab order and its hint is read.
+function AlreadySaved() {
+  const hint = useId();
+  return (
+    <>
+      <Button block variant="secondary" icon="saved" aria-disabled="true" aria-describedby={hint} data-saved>Already saved</Button>
+      <p id={hint} className="ds-fine ds-muted mt-2 text-center">Remove it from My List</p>
+    </>
+  );
 }
 
 export function CardSkeletons({ className = "" }: { className?: string }) {

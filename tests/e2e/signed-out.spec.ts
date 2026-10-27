@@ -19,3 +19,21 @@ for (const path of ["/my-list", "/my-list/history"]) {
     await expect(page.getByRole("heading", { name: /My List|History/ })).toHaveCount(0);
   });
 }
+
+// Signed out, the only key anyone has is the publishable one, which makes Supabase treat them as `anon`: no grants, so
+// every read and write of an Entry is refused (AGENTS.md → Row-level security), not merely filtered to nothing.
+test("signed out, the database refuses every read and write of an Entry", async ({ request }) => {
+  const url = `${process.env.SUPABASE_URL}/rest/v1/movie_list_entries`;
+  const headers = { apikey: process.env.SUPABASE_PUBLISHABLE_KEY!, "Content-Type": "application/json" };
+  const entry = { month: "2026-10-01", tmdb_id: 603, title: "The Matrix" };
+  const tries = [
+    request.get(`${url}?select=*`, { headers }),
+    request.post(url, { headers, data: entry }),
+    request.patch(`${url}?tmdb_id=eq.603`, { headers, data: { watched_at: new Date().toISOString() } }),
+    request.delete(`${url}?tmdb_id=eq.603`, { headers }),
+  ];
+  for (const res of await Promise.all(tries)) {
+    expect(res.status(), await res.text()).toBe(401);
+    expect((await res.json()).code).toBe("42501"); // permission denied for table movie_list_entries
+  }
+});
