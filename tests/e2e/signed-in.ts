@@ -31,8 +31,29 @@ export const card = (page: Page, title: string) =>
 export const saveButton = (page: Page, title: string) => card(page, title).getByRole("button", { name: `Save ${title}` });
 export const alreadySaved = (page: Page, title: string) => card(page, title).getByRole("button", { name: "Already saved" });
 
-// This month's titles on My List.
-export const listRows = (page: Page) => page.getByRole("list", { name: "This month" }).getByRole("listitem");
+// This month's Entries on My List, Not watched yet first, then Watched; or one section's.
+export type Section = "Not watched yet" | "Watched";
+export const sectionRows = (page: Page, name: Section) => page.getByRole("list", { name, exact: true }).getByRole("listitem");
+export const listRows = (page: Page) =>
+  page.getByRole("main").getByRole("list", { name: /^(Not watched yet|Watched)$/ }).getByRole("listitem");
+export const entry = (page: Page, title: string) =>
+  listRows(page).filter({ has: page.getByRole("heading", { name: title, exact: true }) });
+export const watchedSwitch = (page: Page, title: string) => entry(page, title).getByRole("switch", { name: `Watched: ${title}` });
+export const removeButton = (page: Page, title: string) => entry(page, title).getByRole("button", { name: `Remove ${title}` });
+
+// My List's comic-issue header, "OCTOBER 2026 · 8 films · 3 watched · 11h 20m to go", after its month.
+export async function expectTotals(page: Page, totals: string) {
+  await expect(page.getByRole("main").getByText(/^[A-Z]+ \d{4} · \d+ films? · /)).toHaveText(new RegExp(`^[A-Z]+ \\d{4} · ${totals}$`));
+}
+
+// Saves each film from Browse, waiting for the server each time.
+export async function saveFromBrowse(page: Page, titles: string[]) {
+  await page.goto("/");
+  for (const title of titles) {
+    await andWaitForServer(page, () => saveButton(page, title).click());
+    await expect(alreadySaved(page, title)).toBeVisible();
+  }
+}
 
 // The shared toast: changes are announced politely with an Undo, failed writes as an alert.
 export const notice = (page: Page) => page.getByRole("status").filter({ has: page.locator(".ds-toast") });

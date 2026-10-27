@@ -3,9 +3,15 @@
 import "server-only";
 import { cookies } from "next/headers";
 import { connection } from "next/server";
-import { currentMonth } from "./month";
+import { currentMonth, isTimeZone } from "./month";
 
 export async function thisMonth() {
   await connection(); // "now" belongs to the request, never to a prerendered shell
   return currentMonth((await cookies()).get("tz")?.value, new Date());
+}
+
+// The zone the user's dates are shown in, from the same cookie.
+export async function userTimeZone() {
+  const tz = (await cookies()).get("tz")?.value;
+  return isTimeZone(tz) ? tz : "UTC";
 }

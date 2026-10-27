@@ -76,9 +76,13 @@ export function Check({ label, type = "checkbox", ...props }: React.InputHTMLAtt
   );
 }
 
-export function Toggle({ label, checked, onToggle }: { label: string; checked: boolean; onToggle?: () => void }) {
+export function Toggle({ label, checked, onToggle, ...props }: Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "onClick"> & {
+  label: string;
+  checked: boolean;
+  onToggle?: () => void;
+}) {
   return (
-    <button type="button" role="switch" aria-checked={checked} onClick={onToggle} className="ds-toggle">
+    <button type="button" role="switch" aria-checked={checked} onClick={onToggle} className="ds-toggle" {...props}>
       <span aria-hidden className="ds-toggle-track" />
       <span>{label}</span>
     </button>

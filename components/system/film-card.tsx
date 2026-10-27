@@ -16,7 +16,7 @@ export type CardFilm = {
   poster?: string; // image URL
 };
 
-const formatRuntime = (min: number) => `${Math.floor(min / 60)}h ${min % 60}m`;
+export const formatRuntime = (min: number) => `${Math.floor(min / 60)}h ${min % 60}m`;
 
 export function FilmCard({ film, action, headingLevel = 2, state, poster, showSynopsis = true }: {
   film: CardFilm;

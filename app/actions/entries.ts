@@ -1,11 +1,11 @@
 "use server";
-// Changes to the signed-in user's list. The browser sends only a TMDB id, an Entry id, or for Undo of Remove the copy
-// of the deleted row this server signed; the Film's details come from TMDB here, the month from the tz cookie, and
+// Changes to the signed-in user's list. The browser sends only a TMDB id, an Entry id, for Undo of Remove the copy
+// of the deleted row this server signed, or for Undo of a Watched change the previous watched date; the Film's details come from TMDB here, the month from the tz cookie, and
 // user_id from the session token (AGENTS.md → Data model). Each action ends with refresh(), so the same response
 // carries the page re-rendered: the card's Already saved, My List's rows and the tab count.
 import { auth } from "@clerk/nextjs/server";
 import { refresh } from "next/cache";
-import { deleteEntry, insertEntry, reinsertEntry } from "@/lib/entries";
+import { deleteEntry, insertEntry, reinsertEntry, setWatchedAt } from "@/lib/entries";
 import { getSnapshot } from "@/lib/films";
 import { thisMonth } from "@/lib/this-month";
 import type { UndoWrite } from "@/lib/undo";
@@ -15,6 +15,10 @@ export type SaveResult = { status: "saved"; entryId: string } | { status: "alrea
 
 const MAX_INT = 2 ** 31 - 1; // tmdb_id is a Postgres integer
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+const isEntryId = (id: unknown): id is string => typeof id === "string" && UUID.test(id);
+// A watched date to write back: null (Not watched yet) or a timestamp Postgres gave us.
+const isWatchedAt = (at: unknown): at is string | null => at === null || (typeof at === "string" && at.length <= 40 && !Number.isNaN(Date.parse(at)));
 
 async function signedIn() {
   const { userId } = await auth();
@@ -36,8 +40,10 @@ export async function saveFilm(tmdbId: unknown): Promise<SaveResult> {
 // refused before anything is written.
 export async function undoChange(undo: UndoWrite): Promise<void> {
   const userId = await signedIn();
-  if (undo?.kind === "delete-entry" && typeof undo.entryId === "string" && UUID.test(undo.entryId)) {
+  if (undo?.kind === "delete-entry" && isEntryId(undo.entryId)) {
     await deleteEntry(undo.entryId);
+  } else if (undo?.kind === "set-watched" && isEntryId(undo.entryId) && isWatchedAt(undo.watchedAt)) {
+    if (!(await setWatchedAt(await thisMonth(), undo.entryId, undo.watchedAt))) throw new Error("That Entry is gone");
   } else if (undo?.kind === "reinsert-entry") {
     const entry = verifyRemoved(undo.token, { userId, secret: undoSecret(), now: Date.now() });
     if (!entry) throw new Error("That Undo is no longer valid");
@@ -52,11 +58,22 @@ export async function undoChange(undo: UndoWrite): Promise<void> {
 // when there was nothing to remove.
 export async function removeEntry(id: unknown): Promise<{ token: string } | null> {
   const userId = await signedIn();
-  if (typeof id !== "string" || !UUID.test(id)) throw new Error("No such Entry");
+  if (!isEntryId(id)) throw new Error("No such Entry");
   const secret = undoSecret(); // before deleting, so a missing secret can't leave a Remove without its Undo
   const removed = await deleteEntry(id);
   refresh();
   if (!removed) return null;
   const { user_id: _owner, ...entry } = removed; // eslint-disable-line @typescript-eslint/no-unused-vars -- bound by the signature instead
   return { token: signRemoved(entry, { userId, secret, now: Date.now() }) };
+}
+
+// My List's Watched toggle: marks the Entry Watched now (the server's clock) or Not watched yet. The browser keeps the
+// previous watched date for the 3-second Undo, which writes it back through undoChange.
+export async function markWatched(id: unknown, watched: unknown): Promise<{ watchedAt: string | null }> {
+  await signedIn();
+  if (!isEntryId(id) || typeof watched !== "boolean") throw new Error("No such Entry");
+  const entry = await setWatchedAt(await thisMonth(), id, watched ? new Date().toISOString() : null);
+  refresh();
+  if (!entry) throw new Error("That Entry isn't in this month's list");
+  return { watchedAt: entry.watched_at };
 }
