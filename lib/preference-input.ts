@@ -16,6 +16,6 @@ export function parsePreferences(form: FormData): { value: PreferenceInput; erro
   const ids = raw.map((id) => typeof id === "string" && /^\d+$/.test(id) ? Number(id) : NaN);
   const errors: NonNullable<PreferenceState["errors"]> = {};
   if (!display_name || [...display_name].length > 50 || /[\p{Cc}\p{Cf}]/u.test(display_name)) errors.name = "Enter a name between 1 and 50 characters.";
-  if (!ids.length || ids.length > 19 || ids.some((id) => !Object.hasOwn(categoryByGenre, id))) errors.genres = "Choose at least one of the genres below.";
+  if (!ids.length || ids.length > 19 || ids.some((id) => !Object.hasOwn(categoryByGenre, id))) errors.genres = "Choose at least one genre.";
   return Object.keys(errors).length ? { errors } : { value: { display_name, favorite_genre_ids: [...new Set(ids)] } };
 }

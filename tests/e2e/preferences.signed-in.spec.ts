@@ -1,5 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
-import { signIn, skipWithoutTestUsers, USER_A, USER_B } from "./signed-in";
+import { expectWarningUnder, signIn, skipWithoutTestUsers, USER_A, USER_B } from "./signed-in";
 
 test.beforeEach(skipWithoutTestUsers);
 
@@ -49,4 +49,20 @@ test("at least one genre is required and invalid answers do not overwrite the sa
   await page.getByLabel("What should we call you?").fill("   ");
   await page.getByRole("button", { name: "Save preferences" }).click();
   await expect(page.getByRole("alert").filter({ hasText: "Enter a name" })).toBeVisible();
+});
+
+test("emptying a field warns under it in bold red, before anything is saved", async ({ page }) => {
+  await signIn(page, USER_A!);
+  await page.goto("/preferences");
+  const name = page.getByLabel("What should we call you?");
+  const nameRule = page.getByRole("alert").filter({ hasText: "Enter a name" });
+  const genreRule = page.getByRole("alert").filter({ hasText: "Choose at least one" });
+  await expect(nameRule).toHaveCount(0);
+  await name.fill("");
+  await page.keyboard.press("Tab");
+  await expectWarningUnder(name, nameRule);
+  await name.fill("Bijou A");
+  await expect(nameRule).toHaveCount(0);
+  for (const checkbox of await page.getByRole("checkbox", { checked: true }).all()) await checkbox.uncheck();
+  await expectWarningUnder(page.getByRole("group", { name: /What kinds of films do you like/ }).getByRole("checkbox").last(), genreRule);
 });

@@ -37,5 +37,14 @@
   [data-system="pulp"] .bijou-genre-choice .ds-chip[data-selected="true"] { --face: var(--ds-selected); --bulb: var(--ds-bulb-on); --bulb-alt: var(--ds-bulb-hot); color: var(--ds-on-selected); }
   .bijou-genre-choice input:disabled + .ds-chip { opacity: .65; cursor: wait; }
   .bijou-choice-mark { display: inline-block; width: 1em; }
-  .bijou-preference-error { margin-top: 12px; font-weight: 700; }
+  .bijou-preference-error { margin-top: 12px; font-weight: 700; color: var(--ds-error); }
+  .bijou-onboarding-intro { font-size: calc(var(--ds-body-size) + 4px); font-weight: 700; line-height: 1.5; }
+  /* Onboarding's numbered steps: a round issue number beside each question. */
+  .bijou-step-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .bijou-step {
+    display: inline-grid; place-items: center; flex: none;
+    width: 2.25rem; height: 2.25rem; border: 3px solid var(--ds-text); border-radius: 999px;
+    background: var(--ds-accent); color: var(--ds-on-accent);
+    font-family: var(--ds-heading-font); font-size: 1.15rem; line-height: 1;
+  }
 }

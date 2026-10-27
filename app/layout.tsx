@@ -1,10 +1,9 @@
 import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Suspense } from "react";
 import { Credits } from "@/components/bijou/credits";
 import { SiteNav } from "@/components/bijou/site-nav";
-import { SiteTabsPending } from "@/components/bijou/site-tabs";
+import { BrandLink, SiteTabsPending } from "@/components/bijou/site-tabs";
 import { TimeZoneCookie } from "@/components/bijou/time-zone-cookie";
 import { ToastProvider } from "@/components/bijou/toasts";
 import { Brand, HeaderBar, SITE_NAME } from "@/components/system/header";
@@ -31,9 +30,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <ToastProvider>
               <HeaderBar
                 brand={
-                  <Link href="/" className="flex min-h-11 items-center gap-2.5">
+                  <BrandLink>
                     <Brand />
-                  </Link>
+                  </BrandLink>
                 }
                 action={
                   <Suspense fallback={<SiteTabsPending />}>
