@@ -8,13 +8,14 @@ import type { PreferenceInput, PreferenceState } from "@/lib/preference-input";
 import { buttonClass } from "@/components/system/controls";
 import { PulpGenreIcon } from "@/components/system/pulp/genre";
 
-export function PreferenceForm({ genres, initial }: { genres: Genre[]; initial?: PreferenceInput }) {
+export function PreferenceForm({ genres, initial, save }: { genres: Genre[]; initial?: PreferenceInput; save?: string | null }) {
   const [state, action, pending] = useActionState<PreferenceState, FormData>(initial ? updatePreferences : completeOnboarding, {});
   const [name, setName] = useState(initial?.display_name ?? "");
   const [selected, setSelected] = useState(initial?.favorite_genre_ids ?? []);
   const [changed, setChanged] = useState(false);
   return (
     <form action={action} onChange={() => setChanged(true)}>
+      {save && <input type="hidden" name="save" value={save} />}
       <div className="mt-8 max-w-md">
         <label htmlFor="display-name" className="ds-label mb-2 block">What should we call you?</label>
         <input id="display-name" name="display_name" autoComplete="nickname" required maxLength={100} value={name}

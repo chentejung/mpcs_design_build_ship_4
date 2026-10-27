@@ -1,5 +1,11 @@
 import { categoryByGenre } from "./categories";
 
+// The Film a visitor pressed Save on before signing up (components/bijou/save-after-sign-in.ts), carried through
+// onboarding as `?save=<tmdb id>` so it isn't lost on the way. Browse still saves it only if the tab asked for it.
+export const pendingSaveId = (value: unknown): string | null =>
+  typeof value === "string" && /^[1-9]\d{0,9}$/.test(value) ? value : null;
+export const withPendingSave = (path: string, save: string | null) => (save ? `${path}?save=${save}` : path);
+
 export type PreferenceInput = { display_name: string; favorite_genre_ids: number[] };
 export type PreferenceState = { errors?: { name?: string; genres?: string }; message?: string; saved?: boolean };
 

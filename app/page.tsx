@@ -10,7 +10,7 @@ export default function BrowsePage({ searchParams }: { searchParams: Promise<Sea
 }
 
 async function PersonalBrowse({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  const preferences = await browsePreferences();
+  const preferences = await browsePreferences((await searchParams).save);
   return (
     <>
       <section className="grid items-center gap-x-10 gap-y-6 pt-6 pb-6 sm:grid-cols-[minmax(0,1fr)_auto] sm:pt-12 md:pt-14">

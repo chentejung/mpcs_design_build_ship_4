@@ -3,7 +3,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { parsePreferences, type PreferenceState } from "@/lib/preference-input";
+import { parsePreferences, pendingSaveId, withPendingSave, type PreferenceState } from "@/lib/preference-input";
 import { requirePreferences } from "@/lib/preferences";
 import { supabase } from "@/lib/supabase";
 
@@ -23,7 +23,7 @@ async function save(form: FormData): Promise<PreferenceState> {
 export async function completeOnboarding(_previous: PreferenceState, form: FormData): Promise<PreferenceState> {
   await auth.protect();
   const result = await save(form);
-  if (result.saved) redirect("/");
+  if (result.saved) redirect(withPendingSave("/", pendingSaveId(form.get("save"))));
   return result;
 }
 

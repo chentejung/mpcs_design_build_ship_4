@@ -14,7 +14,9 @@ const LIVE = 3002;
 
 export default defineConfig({
   testDir: "tests/e2e",
-  use: { baseURL: `http://localhost:${FIXTURES}`, trace: "retain-on-failure" },
+  // A failure keeps its trace's steps, screenshots and network, but not a DOM snapshot of every step: on the full Browse
+  // grid (thousands of nodes, most in the Pulp genre art) those cost more than the checks themselves.
+  use: { baseURL: `http://localhost:${FIXTURES}`, trace: { mode: "retain-on-failure", snapshots: false } },
   projects: [
     { name: "clerk setup", testMatch: /global\.setup\.ts/ },
     { name: "desktop", testIgnore: /(live|signed-in)\.spec/, use: { ...devices["Desktop Firefox"] } },
