@@ -1,13 +1,15 @@
 // Phone layouts: nothing scrolls sideways and nothing runs into anything else, from the smallest phones up.
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-const pages = ["/"];
+const pages = ["/", "/?feed=top-rated", "/?feed=top-rated&genre=10770"];
 const widths = [320, 360, 390];
 
 // Viewport sizes are set per test, so run them once, on the phone project.
 test.beforeEach(({}, info) => test.skip(info.project.name !== "phone", "phone layouts"));
 
 const box = async (l: Locator) => (await l.boundingBox())!;
+const apart = (a: { x: number; y: number; width: number; height: number }, b: typeof a) =>
+  a.x + a.width <= b.x || b.x + b.width <= a.x || a.y + a.height <= b.y || b.y + b.height <= a.y;
 
 async function open(page: Page, path: string, width: number) {
   await page.setViewportSize({ width, height: 800 });
@@ -33,6 +35,33 @@ for (const width of widths) {
     }
   });
 }
+
+for (const width of widths) {
+  test(`film cards keep title, synopsis and Save apart at ${width}px`, async ({ page }) => {
+    await open(page, "/", width);
+    for (const card of (await page.getByRole("list", { name: "Films" }).getByRole("listitem").all()).slice(0, 6)) {
+      const title = await box(card.getByRole("heading"));
+      const synopsis = await box(card.locator("p").last());
+      const save = await box(card.getByRole("button"));
+      expect(title.y + title.height).toBeLessThanOrEqual(synopsis.y);
+      expect(synopsis.y + synopsis.height).toBeLessThanOrEqual(save.y);
+      expect(apart(title, save)).toBe(true);
+    }
+  });
+}
+
+test("genre chips all wrap into view on a phone and every one can be reached", async ({ page }) => {
+  await open(page, "/", 320);
+  const chips = page.getByRole("group", { name: "Filter by genre" }).getByRole("link");
+  expect(await chips.count()).toBe(20); // All + TMDB's 19 genres
+  for (const chip of await chips.all()) {
+    const b = await box(chip);
+    expect(b.x).toBeGreaterThanOrEqual(0);
+    expect(b.x + b.width).toBeLessThanOrEqual(320);
+  }
+  await chips.last().click();
+  await expect(chips.last()).toHaveAttribute("aria-current", "true");
+});
 
 test("the hero's screening lines appear only above phone width", async ({ page }) => {
   const eyebrow = page.getByText("Now showing · Every month");

@@ -1,0 +1,429 @@
+{
+  "page": 2,
+  "results": [
+    {
+      "adult": false,
+      "backdrop_path": "/nLFxvLokHe3bQmrmAfljIfax2jQ.jpg",
+      "genre_ids": [
+        878,
+        80
+      ],
+      "id": 185,
+      "title": "A Clockwork Orange",
+      "original_language": "en",
+      "original_title": "A Clockwork Orange",
+      "overview": "In a near-future Britain, young Alexander DeLarge and his pals get their kicks beating and raping anyone they please. When not destroying the lives of others, Alex swoons to the music of Beethoven. The state, eager to crack down on juvenile crime, gives an incarcerated Alex the option to undergo an invasive procedure that'll rob him of all personal agency. In a time when conscience is a commodity, can Alex change his tune?",
+      "popularity": 18.8502,
+      "poster_path": "/4sHeTAp65WrSSuc05nRBKddhBxO.jpg",
+      "release_date": "1971-12-19",
+      "softcore": false,
+      "video": false,
+      "vote_average": 8.168,
+      "vote_count": 14261
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/eZ239CUp1d6OryZEBPnO2n87gMG.jpg",
+      "genre_ids": [
+        878,
+        12
+      ],
+      "id": 693134,
+      "title": "Dune: Part Two",
+      "original_language": "en",
+      "original_title": "Dune: Part Two",
+      "overview": "Follow the mythic journey of Paul Atreides as he unites with Chani and the Fremen while on a path of revenge against the conspirators who destroyed his family. Facing a choice between the love of his life and the fate of the known universe, Paul endeavors to prevent a terrible future only he can foresee.",
+      "popularity": 72.9417,
+      "poster_path": "/6izwz7rsy95ARzTR3poZ8H6c5pp.jpg",
+      "release_date": "2024-03-01",
+      "softcore": false,
+      "video": false,
+      "vote_average": 8.144,
+      "vote_count": 8840
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/u53UYu5XG2hNgWGvs3xGhAVzypl.jpg",
+      "genre_ids": [
+        16,
+        12,
+        35,
+        10751,
+        878
+      ],
+      "id": 1327819,
+      "title": "Hoppers",
+      "original_language": "en",
+      "original_title": "Hoppers",
+      "overview": "Scientists have discovered how to 'hop' human consciousness into lifelike robotic animals, allowing people to communicate with animals as animals. Animal lover Mabel seizes an opportunity to use the technology, uncovering mysteries within the animal world beyond anything she could have imagined.",
+      "popularity": 47.9825,
+      "poster_path": "/xjtWQ2CL1mpmMNwuU5HeS4Iuwuu.jpg",
+      "release_date": "2026-03-06",
+      "softcore": false,
+      "video": false,
+      "vote_average": 8.13,
+      "vote_count": 2486
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/nYs4ZwnJBK4AgljhvzwNz7fpr3E.jpg",
+      "genre_ids": [
+        16,
+        10751,
+        878
+      ],
+      "id": 10681,
+      "title": "WALL·E",
+      "original_language": "en",
+      "original_title": "WALL·E",
+      "overview": "After hundreds of years doing what he was built for, WALL•E— a robot designed to clean up the earth—discovers a new purpose in life when he meets a sleek search robot named EVE. EVE comes to realize that WALL•E has inadvertently stumbled upon the key to the planet's future, and races back to space to report to the humans. Meanwhile, WALL•E chases EVE across the galaxy and sets into motion one of the most imaginative adventures ever brought to the big screen.",
+      "popularity": 31.9276,
+      "poster_path": "/hbhFnRzzg6ZDmm8YAmxBnQpQIPh.jpg",
+      "release_date": "2008-06-27",
+      "softcore": false,
+      "video": false,
+      "vote_average": 8.127,
+      "vote_count": 21100
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/95qi5TJMIBI5VzWHia88Pbrye7Z.jpg",
+      "genre_ids": [
+        878,
+        18,
+        10749
+      ],
+      "id": 38,
+      "title": "Eternal Sunshine of the Spotless Mind",
+      "original_language": "en",
+      "original_title": "Eternal Sunshine of the Spotless Mind",
+      "overview": "Joel Barish, heartbroken that his girlfriend underwent a procedure to erase him from her memory, decides to do the same. However, as he watches his memories of her fade away, he realises that he still loves her, and may be too late to correct his mistake.",
+      "popularity": 26.1582,
+      "poster_path": "/5MwkWH9tYHv3mV9OdYTMR5qreIz.jpg",
+      "release_date": "2004-03-19",
+      "softcore": false,
+      "video": false,
+      "vote_average": 8.091,
+      "vote_count": 16921
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/86IbFy98QjRIqg6WanKYb9tXNbJ.jpg",
+      "genre_ids": [
+        878,
+        28,
+        12
+      ],
+      "id": 24428,
+      "title": "The Avengers",
+      "original_language": "en",
+      "original_title": "The Avengers",
+      "overview": "When an unexpected enemy emerges and threatens global safety and security, Nick Fury, director of the international peacekeeping agency known as S.H.I.E.L.D., finds himself in need of a team to pull the world back from the brink of disaster. Spanning the globe, a daring recruitment effort begins!",
+      "popularity": 49.1542,
+      "poster_path": "/RYMX2wcKCBAr24UyPD7xwmjaTn.jpg",
+      "release_date": "2012-05-04",
+      "softcore": false,
+      "video": false,
+      "vote_average": 8.082,
+      "vote_count": 40170
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/eeMoFKxjjiCi6iep2GEZtSAMYIr.jpg",
+      "genre_ids": [
+        18,
+        878
+      ],
+      "id": 19,
+      "title": "Metropolis",
+      "original_language": "de",
+      "original_title": "Metropolis",
+      "overview": "In a futuristic city sharply divided between the rich and the poor, the son of the city's mastermind meets a prophet who predicts the coming of a savior to mediate their differences.",
+      "popularity": 8.4464,
+      "poster_path": "/kr9wXRN23zLuWJIelahas1mtnYj.jpg",
+      "release_date": "1927-03-06",
+      "softcore": false,
+      "video": false,
+      "vote_average": 8.1,
+      "vote_count": 3246
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/6yrbWzzrPp7pwz6zHdifspJk8t3.jpg",
+      "genre_ids": [
+        878,
+        18
+      ],
+      "id": 1398,
+      "title": "Stalker",
+      "original_language": "ru",
+      "original_title": "Сталкер",
+      "overview": "Near a gray and unnamed city is the Zone, a place guarded by barbed wire and soldiers, and where the normal laws of physics are victim to frequent anomalies. A stalker guides two men into the Zone, specifically to an area in which deep-seated desires are granted.",
+      "popularity": 8.4978,
+      "poster_path": "/1qhOyf5C4s9ZdvY8d5JDx9DFMeT.jpg",
+      "release_date": "2014-01-17",
+      "softcore": false,
+      "video": false,
+      "vote_average": 8.1,
+      "vote_count": 2650
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/r9leYNa8nTRCceZrZhP1DXkgKVb.jpg",
+      "genre_ids": [
+        27,
+        9648,
+        878
+      ],
+      "id": 1091,
+      "title": "The Thing",
+      "original_language": "en",
+      "original_title": "The Thing",
+      "overview": "A research team in Antarctica is hunted by a shape-shifting alien that assumes the appearance of its victims.",
+      "popularity": 26.7721,
+      "poster_path": "/tzGY49kseSE9QAKk47uuDGwnSCu.jpg",
+      "release_date": "1982-06-25",
+      "softcore": false,
+      "video": false,
+      "vote_average": 8.074,
+      "vote_count": 8394
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/w5IDXtifKntw0ajv2co7jFlTQDM.jpg",
+      "genre_ids": [
+        878,
+        9648,
+        12
+      ],
+      "id": 62,
+      "title": "2001: A Space Odyssey",
+      "original_language": "en",
+      "original_title": "2001: A Space Odyssey",
+      "overview": "Humanity finds a mysterious object buried beneath the lunar surface and sets off to find its origins with the help of HAL 9000, the world's most advanced super computer.",
+      "popularity": 32.1565,
+      "poster_path": "/ve72VxNqjGM69Uky4WTo2bK6rfq.jpg",
+      "release_date": "1968-04-10",
+      "softcore": false,
+      "video": false,
+      "vote_average": 8.04,
+      "vote_count": 13088
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/wdUnHg8bOmTkHzkvxSY9sCeqJ6q.jpg",
+      "genre_ids": [
+        16,
+        878,
+        10751,
+        28
+      ],
+      "id": 829402,
+      "title": "Ultraman: Rising",
+      "original_language": "en",
+      "original_title": "Ultraman: Rising",
+      "overview": "A star athlete reluctantly returns home to take over his father's duties as Ultraman, shielding Tokyo from giant monsters as he becomes a legendary hero.",
+      "popularity": 7.152,
+      "poster_path": "/j886YEkIUsiImY53px5VHKD4lRa.jpg",
+      "release_date": "2024-06-14",
+      "softcore": false,
+      "video": false,
+      "vote_average": 8,
+      "vote_count": 412
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/cMfokHWle5lfCreoV08cbmkKv6G.jpg",
+      "genre_ids": [
+        16,
+        878,
+        12,
+        10751
+      ],
+      "id": 698687,
+      "title": "Transformers One",
+      "original_language": "en",
+      "original_title": "Transformers One",
+      "overview": "The untold origin story of Optimus Prime and Megatron, better known as sworn enemies, but once were friends bonded like brothers who changed the fate of Cybertron forever.",
+      "popularity": 16.272,
+      "poster_path": "/iRCgqpdVE4wyLQvGYU3ZP7pAtUc.jpg",
+      "release_date": "2024-09-20",
+      "softcore": false,
+      "video": false,
+      "vote_average": 7.977,
+      "vote_count": 1836
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/4SyDTF02R5BepqSdQmOaNCHObzF.jpg",
+      "genre_ids": [
+        12,
+        878
+      ],
+      "id": 329,
+      "title": "Jurassic Park",
+      "original_language": "en",
+      "original_title": "Jurassic Park",
+      "overview": "A wealthy entrepreneur secretly creates a theme park featuring living dinosaurs drawn from prehistoric DNA. Before opening day, he invites a team of experts and his two eager grandchildren to experience the park and help calm anxious investors. However, the park is anything but amusing as the security systems go off-line and the dinosaurs escape.",
+      "popularity": 14.6276,
+      "poster_path": "/d9mtMGQDLANKieb9PbD3yK7xxzo.jpg",
+      "release_date": "1993-06-11",
+      "softcore": false,
+      "video": false,
+      "vote_average": 7.977,
+      "vote_count": 18530
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/6OTRuxpwUUGbmCX3MKP25dOmo59.jpg",
+      "genre_ids": [
+        28,
+        878,
+        16
+      ],
+      "id": 503314,
+      "title": "Dragon Ball Super: Broly",
+      "original_language": "ja",
+      "original_title": "ドラゴンボール超 ブロリー",
+      "overview": "Earth is peaceful following the Tournament of Power. Realizing that the universes still hold many more strong people yet to see, Goku spends all his days training to reach even greater heights. Then one day, Goku and Vegeta are faced by a Saiyan called 'Broly' who they've never seen before. The Saiyans were supposed to have been almost completely wiped out in the destruction of Planet Vegeta, so what's this one doing on Earth? This encounter between the three Saiyans who have followed completely different destinies turns into a stupendous battle, with even Frieza (back from Hell) getting caught up in the mix.",
+      "popularity": 2.7318,
+      "poster_path": "/uMEgkyiPznZP5AiMSWAk2jsj5gC.jpg",
+      "release_date": "2019-01-16",
+      "softcore": false,
+      "video": false,
+      "vote_average": 7.972,
+      "vote_count": 3298
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/4kix6fAblJIH6eMs0Ku2loyZJXK.jpg",
+      "genre_ids": [
+        28,
+        53,
+        878
+      ],
+      "id": 679,
+      "title": "Aliens",
+      "original_language": "en",
+      "original_title": "Aliens",
+      "overview": "Ripley, the sole survivor of the Nostromo's deadly encounter with the monstrous Alien, returns to Earth after drifting through space in hypersleep for 57 years. Although her story is initially met with skepticism, she agrees to accompany a team of Colonial Marines back to LV-426.",
+      "popularity": 27.6171,
+      "poster_path": "/r1x5JGpyqZU8PYhbs4UcrO1Xb6x.jpg",
+      "release_date": "1986-07-18",
+      "softcore": false,
+      "video": false,
+      "vote_average": 7.969,
+      "vote_count": 11326
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/gZ78dyRH9hXeH94ASjuvD9Vw4b5.jpg",
+      "genre_ids": [
+        16,
+        18,
+        10751,
+        878,
+        12
+      ],
+      "id": 10386,
+      "title": "The Iron Giant",
+      "original_language": "en",
+      "original_title": "The Iron Giant",
+      "overview": "In the small town of Rockwell, Maine in October 1957, a giant metal machine befriends a nine-year-old boy and ultimately finds its humanity by unselfishly saving people from their own fears and prejudices.",
+      "popularity": 13.5017,
+      "poster_path": "/k1Cv5CHJvqGWK1xJDUJz8DojFEy.jpg",
+      "release_date": "1999-08-06",
+      "softcore": false,
+      "video": false,
+      "vote_average": 8,
+      "vote_count": 6436
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/1qmefUkrzXW4XDKVtEGFFxHPBeI.jpg",
+      "genre_ids": [
+        878,
+        18
+      ],
+      "id": 315620,
+      "title": "Doctor Who: A Christmas Carol",
+      "original_language": "en",
+      "original_title": "Doctor Who: A Christmas Carol",
+      "overview": "Amy Pond and Rory Williams are trapped on a crashing space liner, and the only way the Eleventh Doctor can rescue them is to save the soul of a lonely old miser. But is Kazran Sardick, the richest man in Sardicktown, beyond redemption? And what is lurking in the fogs of Christmas Eve?",
+      "popularity": 2.2428,
+      "poster_path": "/6dQv1PfE654y3uaA7jW2tIyEEUV.jpg",
+      "release_date": "2010-12-25",
+      "softcore": false,
+      "video": false,
+      "vote_average": 8,
+      "vote_count": 251
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/hIeEpk2w1dnC9ly9ZJwwbunH2Cx.jpg",
+      "genre_ids": [
+        16,
+        18,
+        35,
+        878
+      ],
+      "id": 838240,
+      "title": "Robot Dreams",
+      "original_language": "es",
+      "original_title": "Robot Dreams",
+      "overview": "A lonely dog's friendship with his robot companion takes a sad turn when an unexpected malfunction forces him to abandon Robot at the beach. Will Dog ever meet Robot again?",
+      "popularity": 14.3186,
+      "poster_path": "/ds402Qq09ybgBcXKiQNTZfzsP5o.jpg",
+      "release_date": "2024-05-31",
+      "softcore": false,
+      "video": false,
+      "vote_average": 7.953,
+      "vote_count": 875
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/iQFcwSGbZXMkeyKrxbPnwnRo5fl.jpg",
+      "genre_ids": [
+        28,
+        12,
+        878
+      ],
+      "id": 634649,
+      "title": "Spider-Man: No Way Home",
+      "original_language": "en",
+      "original_title": "Spider-Man: No Way Home",
+      "overview": "Peter Parker is unmasked and no longer able to separate his normal life from the high-stakes of being a super-hero. When he asks for help from Doctor Strange the stakes become even more dangerous, forcing him to discover what it truly means to be Spider-Man.",
+      "popularity": 58.7618,
+      "poster_path": "/1g0dhYtq4irTY1GPXvft6k4YLjm.jpg",
+      "release_date": "2021-12-17",
+      "softcore": false,
+      "video": false,
+      "vote_average": 7.947,
+      "vote_count": 23433
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/An1FS6Baec7uogTcQyEYqruYAtM.jpg",
+      "genre_ids": [
+        16,
+        35,
+        878,
+        12
+      ],
+      "id": 354857,
+      "title": "Regular Show: The Movie",
+      "original_language": "en",
+      "original_title": "Regular Show: The Movie",
+      "overview": "After a high school lab experiment goes horribly wrong, Mordecai and Rigby must go back in time to battle an evil volleyball coach in order to save the universe — and their friendship.",
+      "popularity": 4.1772,
+      "poster_path": "/p44RoW4naoE1nlSGOqqT0J2pc09.jpg",
+      "release_date": "2015-09-01",
+      "softcore": false,
+      "video": false,
+      "vote_average": 7.9,
+      "vote_count": 454
+    }
+  ],
+  "total_pages": 84,
+  "total_results": 1679
+}

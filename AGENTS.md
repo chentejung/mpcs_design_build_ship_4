@@ -165,7 +165,7 @@ genre names are cached (`revalidate` 1 h / 24 h). Back off on HTTP 429 (limit â‰
 | Need | Call |
 |---|---|
 | Now Playing | `GET /3/discover/movie` with `with_release_type=2\|3`, `release_date.gte/lte` from the `dates` window of a cached `GET /3/movie/now_playing`, `sort_by=popularity.desc`, `include_adult=false`, optional `with_genres` |
-| Top Rated | `GET /3/discover/movie` with `sort_by=vote_average.desc`, `vote_count.gte=200`, `without_genres=99,10755`, `include_adult=false`, optional `with_genres` |
+| Top Rated | `GET /3/discover/movie` with `sort_by=vote_average.desc`, `vote_count.gte=200`, `without_genres=99,10770`, `include_adult=false`, optional `with_genres` |
 | Search | `GET /3/search/movie?query=` â€” genre chips and feed tabs are hidden while searching |
 | Genre names | `GET /3/genre/movie/list` |
 | Snapshot on save | `GET /3/movie/{id}` (adds `runtime`) |

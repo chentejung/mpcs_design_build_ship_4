@@ -154,7 +154,7 @@
     cursor: pointer;
     transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
   }
-  .ds-chip[aria-pressed="true"] {
+  .ds-chip:is([aria-pressed="true"], [aria-current="true"]) {
     background: var(--ds-selected);
     color: var(--ds-on-selected);
   }
@@ -165,7 +165,7 @@
     letter-spacing: 0;
     opacity: 0.75;
   }
-  .ds-chip[aria-pressed="true"] .ds-chip-count {
+  .ds-chip:is([aria-pressed="true"], [aria-current="true"]) .ds-chip-count {
     opacity: 1;
   }
 
@@ -316,7 +316,7 @@
     text-transform: var(--ds-label-case);
     cursor: pointer;
   }
-  .ds-tab[aria-selected="true"] {
+  .ds-tab:is([aria-selected="true"], [aria-current="page"]) {
     border-bottom-color: var(--ds-selected);
   }
 
@@ -676,7 +676,7 @@
       var(--face);
     box-shadow: none;
   }
-  [data-system="pulp"] .ds-chip[aria-pressed="true"] {
+  [data-system="pulp"] .ds-chip:is([aria-pressed="true"], [aria-current="true"]) {
     --face: var(--ds-selected);
     --bulb: var(--ds-bulb-on);
     --bulb-alt: var(--ds-bulb-hot);
@@ -685,7 +685,7 @@
   [data-system="pulp"] .ds-chip:is(:hover:not(:disabled), [data-state="hover"])::after {
     animation: ds-chase 0.7s steps(2) infinite;
   }
-  [data-system="pulp"] .ds-chip:is(:hover:not(:disabled), [data-state="hover"]):not([aria-pressed="true"]) {
+  [data-system="pulp"] .ds-chip:is(:hover:not(:disabled), [data-state="hover"]):not([aria-pressed="true"], [aria-current="true"]) {
     --bulb: var(--ds-accent);
   }
   [data-system="pulp"] .ds-chip:is(:active:not(:disabled), [data-state="pressed"]) {
@@ -811,7 +811,7 @@
     margin-bottom: 0;
     border-bottom: 0;
   }
-  [data-system="pulp"] .ds-tab[aria-selected="true"] {
+  [data-system="pulp"] .ds-tab:is([aria-selected="true"], [aria-current="page"]) {
     background: radial-gradient(circle, var(--ds-bulb-on) 0 1.5px, #0000 2px) 0 2px / 8px 6px repeat-x, var(--ds-selected);
     color: var(--ds-on-selected);
   }
@@ -1037,4 +1037,20 @@
   [data-system="pulp"] .bijou-mobile-hide {
     display: none;
   }
+}
+
+/* Placeholder lines under a loading card's poster, pulsing with it. */
+.ds-skeleton-line {
+  height: 0.9em;
+  background: color-mix(in srgb, var(--ds-text) 14%, transparent);
+  animation: ds-pulse 1.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .ds-skeleton-line {
+    animation: none;
+  }
+}
+.ds a.ds-chip,
+.ds a.ds-tab {
+  text-decoration: none;
 }
