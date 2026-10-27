@@ -1,6 +1,6 @@
 "use client";
-// The shared Undo/error toast (AGENTS.md → Product rules 6), for every change to a list: Browse's Save now, My List's
-// changes and History's Add it to this month later. Its rules live in lib/undo.ts; this runs them. It also carries
+// The shared Undo/error toast (AGENTS.md → Product rules 6), for every change to a list: Browse's Save, My List's
+// changes and History's Add it to this month. Its rules live in lib/undo.ts; this runs them. It also carries
 // the My List tab count's optimistic change, since the tab sits in the masthead and the change happens on the page.
 import { createContext, startTransition, useCallback, useContext, useEffect, useMemo, useOptimistic, useReducer, useRef } from "react";
 import { undoChange } from "@/app/actions/entries";

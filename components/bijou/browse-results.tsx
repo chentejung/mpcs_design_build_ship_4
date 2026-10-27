@@ -5,11 +5,12 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { startTransition, useId, useOptimistic, useState, useTransition } from "react";
-import { loadBrowsePage } from "@/app/actions/browse";
+import { loadBrowsePage, type BrowsePage } from "@/app/actions/browse";
 import { saveFilm } from "@/app/actions/entries";
 import { browseHref, posterUrl, type BrowseState } from "@/lib/browse";
 import { categoryFor } from "@/lib/categories";
-import type { FeedPage, Film } from "@/lib/films";
+import type { Film } from "@/lib/films";
+import { monthShortYear } from "@/lib/month";
 import { Button, buttonClass, Toggle } from "@/components/system/controls";
 import { FilmCard } from "@/components/system/film-card";
 import { EmptyState } from "@/components/system/motifs";
@@ -17,15 +18,17 @@ import { useToasts } from "./toasts";
 
 const GRID = "grid grid-cols-2 gap-x-4 gap-y-9 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5";
 
-// `saved` is this month's TMDB ids, or null when signed out.
+// `saved` is this month's TMDB ids, or null when signed out. Each page's `lastListed` is, signed in, the latest past
+// month each of its films was in a list, for the card's "In your Sep 2026 list".
 export function BrowseResults({ state, first, saved, genreNames }: {
   state: BrowseState;
-  first: FeedPage;
+  first: BrowsePage;
   saved: number[] | null;
   genreNames: Record<number, string>;
 }) {
   const [films, setFilms] = useState(first.films);
   const [page, setPage] = useState(first.page);
+  const [lastListed, setLastListed] = useState(first.lastListed);
   const [failed, setFailed] = useState(false);
   const [showSynopses, setShowSynopses] = useState(true);
   const [loading, startLoading] = useTransition();
@@ -59,6 +62,7 @@ export function BrowseResults({ state, first, saved, genreNames }: {
         // Popularity can shift between pages, so a film may turn up twice.
         setFilms((shown) => [...shown, ...next.films.filter((f) => !shown.some((s) => s.id === f.id))]);
         setPage(next.page);
+        setLastListed((months) => ({ ...months, ...next.lastListed }));
         setFailed(false);
       } catch {
         setFailed(true);
@@ -91,7 +95,10 @@ export function BrowseResults({ state, first, saved, genreNames }: {
         {films.map((f) => (
           <li key={f.id}>
             <FilmCard film={toCard(f, genreNames)} showSynopsis={showSynopses} action={
-              savedNow?.includes(f.id) ? <AlreadySaved /> : <SaveButton title={f.title} onSave={savedNow && (() => save(f))} />
+              <>
+                {lastListed[f.id] && <p className="ds-fine ds-muted mb-2">In your {monthShortYear(lastListed[f.id])} list</p>}
+                {savedNow?.includes(f.id) ? <AlreadySaved /> : <SaveButton title={f.title} onSave={savedNow && (() => save(f))} />}
+              </>
             } />
           </li>
         ))}
@@ -125,8 +132,8 @@ function SaveButton({ title, onSave }: { title: string; onSave: (() => void) | n
 }
 
 // One Entry per Film per month: removing it is My List's job, which the hint says. aria-disabled rather than
-// disabled, so it stays in the tab order and its hint is read.
-function AlreadySaved() {
+// disabled, so it stays in the tab order and its hint is read. History's Add it to this month uses it too.
+export function AlreadySaved() {
   const hint = useId();
   return (
     <>

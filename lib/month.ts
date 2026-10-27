@@ -29,3 +29,7 @@ export const monthShort = (month: string) =>
 // "2026-10-01" → "October 2026", for page headings.
 export const monthLong = (month: string) =>
   new Date(`${month}T00:00:00Z`).toLocaleString("en-US", { month: "long", year: "numeric", timeZone: "UTC" });
+
+// "2026-09-01" → "Sep 2026", for Browse's "In your Sep 2026 list".
+export const monthShortYear = (month: string) =>
+  new Date(`${month}T00:00:00Z`).toLocaleString("en-US", { month: "short", year: "numeric", timeZone: "UTC" });

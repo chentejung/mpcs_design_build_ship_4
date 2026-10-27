@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { browseHref, FEEDS, parseBrowseParams, type BrowseState, type Feed, type SearchParams } from "@/lib/browse";
 import { categoryByGenre } from "@/lib/categories";
-import { savedFilmIds } from "@/lib/entries";
+import { lastListedMonths, savedFilmIds } from "@/lib/entries";
 import { getFeedPage, getGenres, getSearchPage, type Genre } from "@/lib/films";
 import { thisMonth } from "@/lib/this-month";
 import { buttonClass } from "@/components/system/controls";
@@ -89,7 +89,15 @@ async function FeedResults({ state, genres }: { state: BrowseState; genres: Genr
     savedThisMonth(),
   ]);
   if (!first) return <ProjectorJammed />;
-  return <BrowseResults state={state} first={first} saved={saved} genreNames={Object.fromEntries(genres.map((g) => [g.id, g.name]))} />;
+  const lastListed = saved ? await lastListedMonths(await thisMonth(), first.films.map((f) => f.id)) : {};
+  return (
+    <BrowseResults
+      state={state}
+      first={{ ...first, lastListed }}
+      saved={saved}
+      genreNames={Object.fromEntries(genres.map((g) => [g.id, g.name]))}
+    />
+  );
 }
 
 // The Films already in this month's list, for Already saved; null when signed out, so Save stays as it is.
