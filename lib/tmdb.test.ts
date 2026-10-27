@@ -25,3 +25,36 @@ describe("with TMDB_FIXTURES=1", () => {
     );
   });
 });
+
+describe("against live TMDB", () => {
+  const tooMany = (retryAfter: string) => new Response("{}", { status: 429, headers: { "Retry-After": retryAfter } });
+  const ok = (body: unknown) => new Response(JSON.stringify(body), { status: 200 });
+
+  beforeEach(() => vi.stubEnv("TMDB_FIXTURES", ""));
+  afterEach(() => {
+    vi.useRealTimers();
+    vi.unstubAllEnvs();
+    vi.unstubAllGlobals();
+  });
+
+  test("backs off on 429 for as long as Retry-After asks, then tries again", async () => {
+    vi.useFakeTimers();
+    const network = vi.fn().mockResolvedValueOnce(tooMany("2")).mockResolvedValueOnce(ok({ page: 1 }));
+    vi.stubGlobal("fetch", network);
+
+    const result = tmdbGet("/3/movie/now_playing");
+    await vi.advanceTimersByTimeAsync(1999);
+    expect(network).toHaveBeenCalledTimes(1);
+    await vi.advanceTimersByTimeAsync(1);
+    expect(network).toHaveBeenCalledTimes(2);
+    await expect(result).resolves.toEqual({ page: 1 });
+  });
+
+  test("gives up after four tries that are all rate-limited", async () => {
+    const network = vi.fn(() => Promise.resolve(tooMany("0")));
+    vi.stubGlobal("fetch", network);
+
+    await expect(tmdbGet("/3/movie/now_playing")).rejects.toThrow("TMDB /3/movie/now_playing answered 429");
+    expect(network).toHaveBeenCalledTimes(4);
+  });
+});

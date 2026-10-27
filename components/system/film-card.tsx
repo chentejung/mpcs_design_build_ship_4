@@ -1,4 +1,4 @@
-// One Film: poster in Pulp's frame with its Category badge, title, original title, year · runtime, synopsis
+// One Film: poster in Pulp's frame with its Category badge, title, original title, year · runtime · genres, synopsis
 // (3 lines at most on phones), and an action (Save or Remove). Once Save is pressed, the HELD OVER! snipe lands on
 // the poster (app/system.css shows it with :has).
 import type { Category } from "@/lib/categories";
@@ -10,6 +10,7 @@ export type CardFilm = {
   original?: { title: string; lang: string }; // shown when it differs from the title
   year?: number;
   runtime?: number; // minutes
+  genres?: string[];
   category?: Category;
   synopsis?: string;
   poster?: string; // image URL
@@ -26,7 +27,7 @@ export function FilmCard({ film, action, headingLevel = 2, state, poster, showSy
   showSynopsis?: boolean;
 }) {
   const Heading = `h${headingLevel}` as const;
-  const meta = [film.year, film.runtime && formatRuntime(film.runtime)].filter(Boolean).join(" · ");
+  const meta = [film.year, film.runtime && formatRuntime(film.runtime), film.genres?.join(", ")].filter(Boolean).join(" · ");
   return (
     <article className="ds-card" data-state={state}>
       <div className="ds-frame">

@@ -1,0 +1,427 @@
+{
+  "page": 1,
+  "results": [
+    {
+      "adult": false,
+      "backdrop_path": "/qRN8eqYwG6HPSy0i3fKzuLrUOhp.jpg",
+      "genre_ids": [
+        28,
+        14
+      ],
+      "id": 1153576,
+      "title": "Street Fighter",
+      "original_language": "en",
+      "original_title": "Street Fighter",
+      "overview": "In 1993, estranged Street Fighters Ryu and Ken Masters are thrown back into combat when the mysterious Chun-Li recruits them for the next World Warrior Tournament: a brutal clash of fists, fate, and fury. But behind this battle royale lies a deadly conspiracy that forces them to face off against each other and the demons of their past. And if they don't, it's GAME OVER!",
+      "popularity": 151.1143,
+      "poster_path": "/ccxdepKqORLwccbzvO4eAGkN0IC.jpg",
+      "release_date": "2026-10-16",
+      "softcore": false,
+      "video": false,
+      "vote_average": 6.418,
+      "vote_count": 184
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/tzoarEu7TsG959upiELyYPm5kO9.jpg",
+      "genre_ids": [
+        53,
+        18,
+        28,
+        80
+      ],
+      "id": 1236045,
+      "title": "Animals",
+      "original_language": "en",
+      "original_title": "Animals",
+      "overview": "When the son of an L.A. mayoral candidate is kidnapped, he and his wife have a few hours to come up with the ransom payment. With most of their money spent on his political campaign, they have to get their hands dirty and expose a side of their lives they never intended to see the light of day.",
+      "popularity": 133.8014,
+      "poster_path": "/iISM36voS1E8gX9BM0DVK0kgi3E.jpg",
+      "release_date": "2026-10-09",
+      "softcore": false,
+      "video": false,
+      "vote_average": 6.968,
+      "vote_count": 613
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/jpH1VRw74w0vvPTY0ryKEtMIXc.jpg",
+      "genre_ids": [
+        28,
+        53
+      ],
+      "id": 1476746,
+      "title": "The Florist",
+      "original_language": "en",
+      "original_title": "The Florist",
+      "overview": "A quiet horticulturalist harboring a secret life as a lethal assassin finds his true identity jeopardized when he forms an unlikely friendship with a witnesses to police corruption.",
+      "popularity": 77.2816,
+      "poster_path": "/4tnRvIiWMzVA2Tw9c7INLo4sfo0.jpg",
+      "release_date": "2026-10-09",
+      "softcore": false,
+      "video": false,
+      "vote_average": 5.7,
+      "vote_count": 28
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/7RyHsO4yDXtBv1zUU3mTpHeQ0d5.jpg",
+      "genre_ids": [
+        12,
+        878,
+        28
+      ],
+      "id": 299534,
+      "title": "Avengers: Endgame",
+      "original_language": "en",
+      "original_title": "Avengers: Endgame",
+      "overview": "After the devastating events of Avengers: Infinity War, the universe is in ruins due to the efforts of the Mad Titan, Thanos. With the help of remaining allies, the Avengers must assemble once more in order to undo Thanos' actions and restore order to the universe once and for all, no matter what consequences may be in store.",
+      "popularity": 79.1125,
+      "poster_path": "/bR8ISy1O9XQxqiy0fQFw2BX72RQ.jpg",
+      "release_date": "2019-04-26",
+      "softcore": false,
+      "video": false,
+      "vote_average": 8.247,
+      "vote_count": 29137
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/zpHTOdRl7GEPqFsDGqsN6Hi9Ylt.jpg",
+      "genre_ids": [
+        28,
+        35
+      ],
+      "id": 1234139,
+      "title": "Jailer 2",
+      "original_language": "ta",
+      "original_title": "ஜெயிலர் 2",
+      "overview": "When a dangerous syndicate expands its reach to threaten his family's peace, retired jailer Tiger Muthuvel Pandian goes undercover as a driver. Operating from the shadows, he takes on ruthless new enemies to protect his home.",
+      "popularity": 51.7145,
+      "poster_path": "/upwdEyhhYZ7pT2hD535fr2MGfpx.jpg",
+      "release_date": "2026-10-14",
+      "softcore": false,
+      "video": false,
+      "vote_average": 8.105,
+      "vote_count": 19
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/nuO8o9ltxhI7AZQxePavEZ4TyHa.jpg",
+      "genre_ids": [
+        28,
+        80,
+        18
+      ],
+      "id": 2034,
+      "title": "Training Day",
+      "original_language": "en",
+      "original_title": "Training Day",
+      "overview": "On his first day on the job as a narcotics officer, a rookie cop works with a rogue detective who isn't what he appears.",
+      "popularity": 46.8083,
+      "poster_path": "/bUeiwBQdupBLQthMCHKV7zv56uv.jpg",
+      "release_date": "2001-10-05",
+      "softcore": false,
+      "video": false,
+      "vote_average": 7.534,
+      "vote_count": 6957
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/jiFLiatBtBALlAzV5R72gzspBad.jpg",
+      "genre_ids": [
+        28,
+        80,
+        18,
+        53
+      ],
+      "id": 1437396,
+      "title": "Your Mother Your Mother Your Mother",
+      "original_language": "en",
+      "original_title": "Your Mother Your Mother Your Mother",
+      "overview": "Latif, a devoutly religious hitman, struggles to balance work, faith and fatherhood. When his wife dies, he embarks on a desperate journey across Houston to protect his children, confronting the forces closing in around him – and the beliefs threatening to unravel within.",
+      "popularity": 39.3021,
+      "poster_path": "/4KaPZSKnInnArErTTgy9Oy14leR.jpg",
+      "release_date": "2026-09-25",
+      "softcore": false,
+      "video": false,
+      "vote_average": 7.6,
+      "vote_count": 10
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/qsXgcngz1gH7kRzJfzxU4gCktDn.jpg",
+      "genre_ids": [
+        37,
+        28,
+        12,
+        10749
+      ],
+      "id": 1669915,
+      "title": "Angel and the Badman",
+      "original_language": "en",
+      "original_title": "Angel and the Badman",
+      "overview": "A wounded outlaw finds unexpected mercy in the care of a rancher's daughter. The hope of love pulls him toward a different life until the law, and his violent past, close in on his new home. Now he must choose the kind of man he'll become.",
+      "popularity": 39.8669,
+      "poster_path": "/mJe53zlhGBdcjtN1GqncNZ5Unm0.jpg",
+      "release_date": "2026-10-09",
+      "softcore": false,
+      "video": false,
+      "vote_average": 9,
+      "vote_count": 1
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/e0djmN1YD6NcbLX6T0nSNKIvrrT.jpg",
+      "genre_ids": [
+        16,
+        878,
+        28,
+        12,
+        10751
+      ],
+      "id": 1857,
+      "title": "The Transformers: The Movie",
+      "original_language": "en",
+      "original_title": "The Transformers: The Movie",
+      "overview": "The Autobots must stop a colossal planet-consuming robot who goes after the Autobot Matrix of Leadership. At the same time, they must defend themselves against an all-out attack from the Decepticons.",
+      "popularity": 36.127,
+      "poster_path": "/xJ5W0mOAWCVaXmU0pBZh4NjSRv2.jpg",
+      "release_date": "1986-08-08",
+      "softcore": false,
+      "video": false,
+      "vote_average": 7.1,
+      "vote_count": 656
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/v5Wb9NoE0s1mGmC5wVeQR1OK22V.jpg",
+      "genre_ids": [
+        28,
+        53
+      ],
+      "id": 1185344,
+      "title": "The Beast",
+      "original_language": "en",
+      "original_title": "The Beast",
+      "overview": "When a militia of unidentified hostiles coordinates a coup against the United States, the president must fight back by utilizing the highly classified offensive capabilities of his armored limousine, nicknamed The Beast.",
+      "popularity": 36.5344,
+      "poster_path": "/ocg5JfJP19fodcv5uQUApkmZMdI.jpg",
+      "release_date": "2026-10-09",
+      "softcore": false,
+      "video": false,
+      "vote_average": 5,
+      "vote_count": 4
+    },
+    {
+      "adult": false,
+      "backdrop_path": null,
+      "genre_ids": [
+        80,
+        28,
+        35,
+        12
+      ],
+      "id": 1783073,
+      "title": "Repo",
+      "original_language": "en",
+      "original_title": "Repo",
+      "overview": "After his last job went wrong, local fixer John is trying to get out of the game. His criminal boss, Indiana Slim, refuses to give John his final payment unless he does one final job, leaving John with two options: complete one last job, or leave empty handed",
+      "popularity": 34.105,
+      "poster_path": "/xKp4mHSksjDamItoF7sI132S26J.jpg",
+      "release_date": "2026-10-02",
+      "softcore": false,
+      "video": false,
+      "vote_average": 10,
+      "vote_count": 1
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/J1UgJwRxDQS92kw75KgeVFZMHf.jpg",
+      "genre_ids": [
+        28,
+        35,
+        14
+      ],
+      "id": 1491920,
+      "title": "Kung Fu Soccer",
+      "original_language": "zh",
+      "original_title": "功夫女足",
+      "overview": "Dismissed as underdogs before they even step onto the pitch, the Emei Women's Football Team enters the prestigious Supreme Invincible Cup determined to prove everyone wrong. Led by captain Shuangshuang, star striker Yulong, and mentor Xu Feng, the team combines martial arts mastery with football skill in a thrilling quest for victory. Against mounting challenges and impossible odds, they fight to make their mark and chase their championship dream.",
+      "popularity": 32.4632,
+      "poster_path": "/kTf9kJ3QMQqYs6wNdYJeVtwIZ2Z.jpg",
+      "release_date": "2026-10-23",
+      "softcore": false,
+      "video": false,
+      "vote_average": 5.8,
+      "vote_count": 52
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/7AcH5TFppoMusNkCBLaQP6UOODp.jpg",
+      "genre_ids": [
+        28,
+        18
+      ],
+      "id": 1376856,
+      "title": "The Paradise",
+      "original_language": "te",
+      "original_title": "ది ప్యారడైజ్",
+      "overview": "In 1980s Secunderabad, a marginalized tribe battles discrimination and fights for citizenship under an unexpected leader's guidance, challenging systemic oppression.",
+      "popularity": 26.8889,
+      "poster_path": "/smghVMoMWSIFi5dgIz4w1UIcEcY.jpg",
+      "release_date": "2026-09-23",
+      "softcore": false,
+      "video": false,
+      "vote_average": 4.2,
+      "vote_count": 9
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/xpImgnsxuqb3VOp0QRtXTS5uBRi.jpg",
+      "genre_ids": [
+        36,
+        28,
+        18
+      ],
+      "id": 1389379,
+      "title": "Ranabaali",
+      "original_language": "te",
+      "original_title": "రణబాలి",
+      "overview": "Set in 19th-century British India, a fierce leader rises from a drought-stricken land to fight colonial oppression and atrocities.",
+      "popularity": 20.9655,
+      "poster_path": "/cXaCyYYbafVyMrs8rwKmxezBYPJ.jpg",
+      "release_date": "2026-10-16",
+      "softcore": false,
+      "video": false,
+      "vote_average": 4,
+      "vote_count": 2
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/jIpagj2Dud9g3ZVJFvaWikEWsYz.jpg",
+      "genre_ids": [
+        28,
+        16,
+        878
+      ],
+      "id": 9323,
+      "title": "Ghost in the Shell",
+      "original_language": "ja",
+      "original_title": "GHOST IN THE SHELL / 攻殻機動隊",
+      "overview": "In the year 2029, the barriers of our world have been broken down by the net and by cybernetics, but this brings new vulnerability to humans in the form of brain-hacking. When a highly-wanted hacker known as 'The Puppetmaster' begins involving them in politics, Section 9, a group of cybernetically enhanced cops, are called in to investigate and stop the Puppetmaster.",
+      "popularity": 23.4477,
+      "poster_path": "/9gC88zYUBARRSThcG93MvW14sqx.jpg",
+      "release_date": "1996-03-29",
+      "softcore": false,
+      "video": false,
+      "vote_average": 7.93,
+      "vote_count": 4118
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/ncVecUcDZe1EOWtHaU2f8BFvbx4.jpg",
+      "genre_ids": [
+        35,
+        28
+      ],
+      "id": 1375156,
+      "title": "Udta Teer",
+      "original_language": "hi",
+      "original_title": "उड़ता तीर",
+      "overview": "An amnesiac Pakistani spy wakes up believing he is a patriotic Indian counter-terrorism officer.",
+      "popularity": 18.8836,
+      "poster_path": "/tvICKypVlW7Iio4KVs7NousbSKi.jpg",
+      "release_date": "2026-10-23",
+      "softcore": false,
+      "video": false,
+      "vote_average": 7.5,
+      "vote_count": 3
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/xrAtBSFEYzcRRB5kOvtICSuOrok.jpg",
+      "genre_ids": [
+        18,
+        35,
+        28
+      ],
+      "id": 1515692,
+      "title": "Baththa",
+      "original_language": "ta",
+      "original_title": "பத்தா",
+      "overview": "In 1986 Madras, a timid eight-year-old boy accidentally traps a feared gangster inside a deserted school toilet. As the gangster is forced to confront hunger, loneliness and his own vulnerability, an unlikely bond begins to grow between the two, changing their lives forever.",
+      "popularity": 13.558,
+      "poster_path": "/Ag59cmNNXCcKIBYdlmZ9HqPH9zG.jpg",
+      "release_date": "2026-10-01",
+      "softcore": false,
+      "video": false,
+      "vote_average": 8.2,
+      "vote_count": 4
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/rhc7OF7tC9HPu0X8DBKQJzaGRbu.jpg",
+      "genre_ids": [
+        14,
+        28,
+        80
+      ],
+      "id": 268,
+      "title": "Batman",
+      "original_language": "en",
+      "original_title": "Batman",
+      "overview": "Having witnessed his parents' brutal murder as a child, millionaire philanthropist Bruce Wayne fights crime in Gotham City disguised as Batman, a costumed hero who strikes fear into the hearts of villains. But when a deformed madman known as 'The Joker' seizes control of Gotham's criminal underworld, Batman must face his most ruthless nemesis ever while protecting both his identity and his love interest, reporter Vicki Vale.",
+      "popularity": 14.5387,
+      "poster_path": "/cij4dd21v2Rk2YtUQbV5kW69WB2.jpg",
+      "release_date": "1989-06-23",
+      "softcore": false,
+      "video": false,
+      "vote_average": 7.234,
+      "vote_count": 8901
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/rWYtghaUJSDvQm4jmXiCPXBHUdQ.jpg",
+      "genre_ids": [
+        16,
+        28,
+        35,
+        10751
+      ],
+      "id": 324849,
+      "title": "The Lego Batman Movie",
+      "original_language": "en",
+      "original_title": "The Lego Batman Movie",
+      "overview": "A cooler-than-ever Batman must face the usual villains as the Joker plots a takeover of Gotham City. But when Bruce Wayne accidentally adopts a teenage orphan who wishes to become his sidekick, he’s forced to give up his lone-vigilante ways and learn to work with others.",
+      "popularity": 13.1469,
+      "poster_path": "/e1TliRWOdXQ73pRunbpFiGst6Kd.jpg",
+      "release_date": "2017-02-10",
+      "softcore": false,
+      "video": false,
+      "vote_average": 7.265,
+      "vote_count": 5631
+    },
+    {
+      "adult": false,
+      "backdrop_path": "/nt5xQvc0Tx8WcRoW9iHFiAaWYd8.jpg",
+      "genre_ids": [
+        28,
+        35
+      ],
+      "id": 1443151,
+      "title": "Double Trouble",
+      "original_language": "en",
+      "original_title": "Double Trouble",
+      "overview": "Two witty sisters in Vegas get tangled in a holiday heist and join forces with an ex-MI6 guard to outmaneuver a master thief and recover a diamond gauntlet before Christmas.",
+      "popularity": 5.4908,
+      "poster_path": "/2ecp59fHPF5Uq6vRQ6CJtyx4iAp.jpg",
+      "release_date": "2026-10-09",
+      "softcore": false,
+      "video": false,
+      "vote_average": 7,
+      "vote_count": 1
+    }
+  ],
+  "total_pages": 3,
+  "total_results": 44
+}
