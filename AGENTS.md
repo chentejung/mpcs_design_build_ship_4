@@ -193,13 +193,15 @@ attribution and its required notice in the credits.
 - Env: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`
   (server-only — no `NEXT_PUBLIC_`), `TMDB_READ_ACCESS_TOKEN` (v4 Bearer). `.env.example` lists them without values.
 - Vercel imports the GitHub repo: `main` deploys to production, each PR gets a preview. The owner sets env vars there.
-- One feature branch + PR per slice, merged after tests pass and the preview looks right. Slices, in order:
-  1. scaffold, Pulp shell, signed-out Browse from TMDB — deployed to Vercel;
-  2. Clerk: sign in/out, `UserButton`, `/my-list` protection, tab bar;
-  3. migration + Save / Already saved / auto-save after sign-in + the isolation test;
-  4. My List: sections, Watched toggle, Remove, totals, view and sort;
-  5. History: month filter, title search, Add it to this month;
-  6. Undo and error toasts everywhere, phone/desktop polish.
+- One feature branch + PR per ticket, merged after tests pass and the preview looks right. The tickets are the
+  sub-issues of spec #1 on GitHub, with native blocked-by links; work any ticket whose blockers are all closed.
+  Each slice carries its own Undo and error handling, using the shared toast built in #7.
+  - #2 scaffold, Pulp shell, test harness → #11 Browse feeds from TMDB → #12 search;
+  - #5 sign in, tab bar, My List protection (after #2 and owner ticket #4, Clerk app);
+  - #7 migrations, Save, Already saved, Undo/error toast, isolation test (after #11, #5 and owner ticket #6,
+    Clerk ↔ Supabase);
+  - then, in parallel: #13 save after sign-in, #8 My List for this month, #9 read-only History;
+  - #10 polish and production check (after #3, owner's Vercel import, and #12, #13, #8, #9).
 - Dev: `npm run dev` on port 3000; tests run against `next build && next start` on port 3001.
 
 ## Testing
