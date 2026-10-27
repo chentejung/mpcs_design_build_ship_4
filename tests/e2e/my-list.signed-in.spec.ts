@@ -14,8 +14,12 @@ test.describe.configure({ mode: "serial" });
 // The three films with a saved TMDB snapshot: Clayface (109 min), Street Fighter (120 min), Resident Evil (95 min).
 const [first, , third, fourth] = nowPlaying(1).results.map((m) => m.title);
 
-// An Entry's dates as the page states them, in full: <time datetime="…"> for Added and, once Watched, Watched.
-const dates = (page: Page, title: string) => entry(page, title).locator("time").evaluateAll((ts) => ts.map((t) => t.getAttribute("datetime")));
+// An Entry's dates as the page states them, in full: <time datetime="…"> for Added and, once Watched, Watched. Waits
+// for the Entry first: straight after a reload the list may still be streaming in.
+async function dates(page: Page, title: string) {
+  await expect(entry(page, title)).toBeVisible();
+  return entry(page, title).locator("time").evaluateAll((ts) => ts.map((t) => t.getAttribute("datetime")));
+}
 
 test.beforeEach(async ({ page }) => {
   skipWithoutTestUsers();
