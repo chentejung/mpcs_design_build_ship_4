@@ -14,8 +14,9 @@ Entries through My List's Remove. Then:
 1. A saves film X (Street Fighter) on Browse; B saves film Y (Resident Evil). Each tab then reads `My List · Oct (1)`.
 2. A's My List lists X only; B's lists Y only.
 3. On Browse, A sees X as **Already saved** and Y as **Save**; B sees the reverse.
-4. Neither user's History shows the other's seeded History titles. (Until #9 builds the History list this check has
-   nothing to find; it starts to bite once #9 lands.)
+4. Neither user's History shows the other's seeded History titles, not even when searched for; each sees their own
+   month with its own counts. On Browse, "In your Sep 2026 list" appears only on the user's own past film. (Added by
+   #9, which built History; the loosened-policy runs below predate it.)
 5. Both users remove their film again, so the next run starts from an empty month.
 
 Command (desktop, signed-in project; `npx playwright test` starts the built app itself):
@@ -27,13 +28,14 @@ npx playwright test isolation --project "signed in"
 ## Seeded test History
 
 One past month, **September 2026** (`month = '2026-09-01'`), inserted as the database owner through the Supabase MCP's
-`execute_sql`, which the read-only History trigger doesn't check. The user ids come from Clerk's Backend API by the
-test users' emails. Tests treat these rows as read-only.
+`execute_sql`, which the read-only History trigger doesn't check. The SQL is `scripts/seed-history.sql` (idempotent;
+#9 added the last two films for each user). The user ids come from Clerk's Backend API by the test users' emails.
+Tests treat these rows as read-only.
 
 | User | Clerk user id | Films (TMDB id) | Watched |
 |---|---|---|---|
-| A | `user_3LGBtBfGJq5kYprWw2maZZcPbC7` | The Matrix (603), Pulp Fiction (680), The Godfather (238) | The Matrix |
-| B | `user_3LGBtDWY1uKgLkKO1hnuPporg9P` | Fight Club (550), Forrest Gump (13), The Dark Knight (155) | Fight Club |
+| A | `user_3LGBtBfGJq5kYprWw2maZZcPbC7` | The Matrix (603), Pulp Fiction (680), The Godfather (238), Spirited Away (129), Clayface (1400940) | The Matrix, Spirited Away |
+| B | `user_3LGBtDWY1uKgLkKO1hnuPporg9P` | Fight Club (550), Forrest Gump (13), The Dark Knight (155), Buddy (1514026) | Fight Club, Buddy |
 
 Each row carries its TMDB snapshot (title, original title and language, year, runtime, poster path, genre ids,
 overview), as `GET /3/movie/{id}` answered on 2026-10-27.

@@ -6,7 +6,7 @@
 export const UNDO_MS = 3000;
 export const ERROR_MS = 5000; // an error has no Undo, but needs long enough to be read
 
-// What Undo writes back. Save (and, later, Add it to this month) is undone by deleting the Entry it made; Remove by
+// What Undo writes back. Save and Add it to this month are undone by deleting the Entry they made; Remove by
 // re-inserting the deleted row from the server-signed copy (lib/undo-token.ts); marking or unmarking Watched by
 // setting the Entry's previous watched_at again (null = Not watched yet).
 export type UndoWrite =

@@ -17,6 +17,13 @@ export async function signIn(page: Page, emailAddress: string) {
   await page.waitForLoadState("networkidle"); // Clerk refreshes the page once the session is set
 }
 
+// Goes to a page and waits for Clerk's script to finish loading there. Leaving a page while Clerk is still setting up
+// cuts its requests short, and the next page's handshake (on a development instance) can then come back signed out.
+export async function visit(page: Page, url: string) {
+  await page.goto(url);
+  await clerk.loaded({ page });
+}
+
 export const myListTab = (page: Page) => page.getByRole("navigation", { name: "Site" }).getByRole("link", { name: /^My List/ });
 
 // "My List · Oct (2)" → 2
@@ -48,7 +55,7 @@ export async function expectTotals(page: Page, totals: string) {
 
 // Saves each film from Browse, waiting for the server each time.
 export async function saveFromBrowse(page: Page, titles: string[]) {
-  await page.goto("/");
+  await visit(page, "/");
   for (const title of titles) {
     await andWaitForServer(page, () => saveButton(page, title).click());
     await expect(alreadySaved(page, title)).toBeVisible();
@@ -62,16 +69,18 @@ export const undoButton = (page: Page) => notice(page).getByRole("button", { nam
 
 // Does `act` and waits for the Server Action it starts to answer. The page shows a change before the server has made it
 // (optimistic UI), so a test that reloads or leaves straight after would cut the write short.
+// It waits for the request `act` sends, not just the next answer: an earlier write still in flight (a Remove whose
+// Undo `act` clicks) would answer first, and the test would move on with `act`'s own write unfinished.
 export async function andWaitForServer(page: Page, act: () => Promise<void>) {
-  const answered = page.waitForResponse((r) => r.request().method() === "POST" && !!r.request().headers()["next-action"]);
+  const sent = page.waitForRequest((r) => r.method() === "POST" && !!r.headers()["next-action"]);
   await act();
-  await (await answered).finished();
+  await (await (await sent).response())?.finished();
 }
 
 // Empties this month's list the way a user would: Remove, one Entry at a time. Each waits for its Undo toast, which
 // appears once the server has deleted the row, so leaving the page can't cut a removal short.
 export async function clearThisMonth(page: Page) {
-  await page.goto("/my-list");
+  await visit(page, "/my-list");
   await expect(page.getByRole("heading", { level: 1, name: "My List" })).toBeVisible();
   const remove = page.getByRole("button", { name: /^Remove / });
   for (let n = await remove.count(); n > 0; n--) {
