@@ -221,6 +221,7 @@
     pointer-events: none;
   }
   .ds-check {
+    position: relative; /* holds the visually hidden input at its box, so focusing it doesn't scroll away */
     display: inline-flex;
     min-height: 44px;
     align-items: center;
@@ -978,6 +979,10 @@
   }
   [data-system="pulp"] .ds-row .ds-poster {
     border-width: 2px;
+  }
+  /* A row's thumbnail is too small for the fallback's title and notice; the row names the film beside it. */
+  .ds-row .ds-poster-fallback > * {
+    display: none;
   }
   /* The toast is a narration caption: Mustard, keylined, on its block. */
   [data-system="pulp"] .ds-toast {

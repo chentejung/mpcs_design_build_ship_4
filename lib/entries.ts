@@ -63,6 +63,20 @@ export async function deleteEntry(id: string): Promise<Entry | null> {
   return data;
 }
 
+// Marks an Entry in this month's list Watched (a date) or Not watched yet (null), and returns it (null if there is no
+// such Entry this month). watched_at is the only column that changes; the History trigger allows nothing else.
+export async function setWatchedAt(month: string, id: string, watchedAt: string | null): Promise<Entry | null> {
+  const { data, error } = await supabase()
+    .from("movie_list_entries")
+    .update({ watched_at: watchedAt })
+    .eq("month", month)
+    .eq("id", id)
+    .select("*")
+    .maybeSingle();
+  if (error) fail("marking an Entry watched", error);
+  return data;
+}
+
 // Undo of Remove: the exact deleted row back (same id, added_at and watched_at), from the copy the server signed
 // (lib/undo-token.ts). user_id is not in the copy; the column default fills it from the token, and RLS checks it.
 export async function reinsertEntry(entry: RemovedEntry): Promise<void> {

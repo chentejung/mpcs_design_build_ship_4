@@ -61,4 +61,19 @@ describe("the Undo toast", () => {
   it("undoing a Remove puts one back on the My List count", () => {
     expect(countChange({ kind: "reinsert-entry", token: "signed.copy" })).toBe(1);
   });
+
+  it("a Watched change's Undo writes back the previous watched date, and only the latest one can be undone", () => {
+    const watched = (s: ToastState, entryId: string, watchedAt: string | null) =>
+      toastReducer(s, { type: "changed", message: "Marked watched.", undo: { kind: "set-watched", entryId, watchedAt } });
+    const first = watched(EMPTY, "e1", null);
+    const second = watched(first, "e2", "2026-10-12T20:15:31.123456+00:00");
+    expect(undoFor(second, first.toast!.seq)).toBeNull();
+    expect(undoFor(second, second.toast!.seq)).toEqual({
+      kind: "set-watched", entryId: "e2", watchedAt: "2026-10-12T20:15:31.123456+00:00",
+    });
+  });
+
+  it("undoing a Watched change leaves the My List count alone", () => {
+    expect(countChange({ kind: "set-watched", entryId: "e1", watchedAt: null })).toBe(0);
+  });
 });
