@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { discoverParams, parseBrowseParams } from "./browse";
+import { discoverParams, parseBrowseParams, searchParams } from "./browse";
 
 const window = { minimum: "2026-09-12", maximum: "2026-10-24" };
 
@@ -35,11 +35,11 @@ describe("parseBrowseParams", () => {
   const genres = [28, 35, 878];
 
   test("with nothing in the URL, Browse shows Now Playing across every genre", () => {
-    expect(parseBrowseParams({}, genres)).toEqual({ feed: "now-playing", genre: null });
+    expect(parseBrowseParams({}, genres)).toEqual({ feed: "now-playing", genre: null, q: null });
   });
 
   test("reads the feed and a known genre", () => {
-    expect(parseBrowseParams({ feed: "top-rated", genre: "878" }, genres)).toEqual({ feed: "top-rated", genre: 878 });
+    expect(parseBrowseParams({ feed: "top-rated", genre: "878" }, genres)).toEqual({ feed: "top-rated", genre: 878, q: null });
   });
 
   test("ignores a feed it doesn't know", () => {
@@ -51,6 +51,22 @@ describe("parseBrowseParams", () => {
   });
 
   test("takes the first value when a parameter is repeated", () => {
-    expect(parseBrowseParams({ feed: ["top-rated", "now-playing"], genre: ["35", "28"] }, genres)).toEqual({ feed: "top-rated", genre: 35 });
+    expect(parseBrowseParams({ feed: ["top-rated", "now-playing"], genre: ["35", "28"] }, genres)).toEqual({ feed: "top-rated", genre: 35, q: null });
+  });
+});
+
+describe("parseBrowseParams search", () => {
+  test("reads the search, trimmed, and keeps the feed and genre to come back to", () => {
+    expect(parseBrowseParams({ q: "  the thing ", feed: "top-rated", genre: "28" }, [28])).toEqual({ feed: "top-rated", genre: 28, q: "the thing" });
+  });
+
+  test.each(["", "   "])("ignores the empty search %j", (q) => {
+    expect(parseBrowseParams({ q }, []).q).toBeNull();
+  });
+});
+
+describe("searchParams", () => {
+  test("searches all of TMDB by title, leaving adult films out", () => {
+    expect(searchParams({ q: "the thing", page: 2 })).toEqual({ query: "the thing", include_adult: "false", page: 2 });
   });
 });

@@ -1,11 +1,12 @@
 "use server";
-// Load more: the next 20 of a feed, fetched on the server so the browser never talks to TMDB.
-import { parseBrowseParams } from "@/lib/browse";
-import { getFeedPage, getGenres, type FeedPage } from "@/lib/films";
+// Load more: the next 20 of a feed or a search, fetched on the server so the browser never talks to TMDB.
+import { parseBrowseParams, type SearchParams } from "@/lib/browse";
+import { getFeedPage, getGenres, getSearchPage, type FeedPage } from "@/lib/films";
 
-export async function loadFeedPage(feed: string, genre: string | null, page: number): Promise<FeedPage> {
+// `browse` is the page's own URL state (feed, genre, q), parsed again here as untrusted input.
+export async function loadBrowsePage(browse: SearchParams, page: number): Promise<FeedPage> {
   if (!Number.isInteger(page) || page < 2 || page > 500) throw new Error("No such page");
   const genres = await getGenres();
-  const parsed = parseBrowseParams({ feed, genre: genre ?? undefined }, genres.map((g) => g.id));
-  return getFeedPage(parsed.feed, parsed.genre, page);
+  const { feed, genre, q } = parseBrowseParams(browse, genres.map((g) => g.id));
+  return q ? getSearchPage(q, page) : getFeedPage(feed, genre, page);
 }

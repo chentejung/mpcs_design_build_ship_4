@@ -1,7 +1,7 @@
 // Phone layouts: nothing scrolls sideways and nothing runs into anything else, from the smallest phones up.
 import { expect, test, type Locator, type Page } from "@playwright/test";
 
-const pages = ["/", "/?feed=top-rated", "/?feed=top-rated&genre=10770"];
+const pages = ["/", "/?feed=top-rated", "/?feed=top-rated&genre=10770", "/?q=alien", "/?q=zqxjvwk"];
 const widths = [320, 360, 390];
 
 // Viewport sizes are set per test, so run them once, on the phone project.

@@ -19,3 +19,8 @@ export function discoverFixture(...parts: string[]) {
 
 export const nowPlaying = (page = 1, ...more: string[]) => discoverFixture(`page=${page}&`, "with_release_type=2%7C3", ...more);
 export const topRated = (page = 1, ...more: string[]) => discoverFixture(`page=${page}&`, "vote_average.desc", ...more);
+
+export function searchFixture(q: string, page = 1) {
+  const name = `search-movie.include_adult=false&page=${page}&query=${encodeURIComponent(q)}.json`;
+  return (JSON.parse(readFileSync(path.join(FIXTURES, name), "utf8")) as { results: Movie[] }).results;
+}

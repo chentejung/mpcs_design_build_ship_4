@@ -1,7 +1,7 @@
-// Browse's data from TMDB, cached on the server: feeds for an hour, genre names for a day (AGENTS.md → TMDB).
+// Browse's data from TMDB, cached on the server: feeds and searches for an hour, genre names for a day (AGENTS.md → TMDB).
 import "server-only";
 import { cacheLife } from "next/cache";
-import { discoverParams, type Feed, type NowPlayingWindow } from "./browse";
+import { discoverParams, searchParams, type Feed, type NowPlayingWindow } from "./browse";
 import { tmdbGet } from "./tmdb";
 
 export type Genre = { id: number; name: string };
@@ -56,5 +56,12 @@ export async function getFeedPage(feed: Feed, genre: number | null, page: number
   cacheLife({ revalidate: HOUR });
   const window = feed === "now-playing" ? await getNowPlayingWindow() : undefined;
   const list = await tmdbGet<TmdbList>("/3/discover/movie", discoverParams({ feed, genre, page, window }));
+  return { films: list.results.map(toFilm), page: list.page, totalPages: Math.min(list.total_pages, MAX_PAGE) };
+}
+
+export async function getSearchPage(q: string, page: number): Promise<FeedPage> {
+  "use cache";
+  cacheLife({ revalidate: HOUR });
+  const list = await tmdbGet<TmdbList>("/3/search/movie", searchParams({ q, page }));
   return { films: list.results.map(toFilm), page: list.page, totalPages: Math.min(list.total_pages, MAX_PAGE) };
 }
