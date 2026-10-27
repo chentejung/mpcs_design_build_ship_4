@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+import { requirePreferences } from "@/lib/preferences";
 import type { Metadata } from "next";
 import Form from "next/form";
 import Link from "next/link";
@@ -16,7 +16,8 @@ import { thisMonth, userTimeZone } from "@/lib/this-month";
 
 export const metadata: Metadata = { title: "History" };
 
-// Every earlier month, read-only. proxy.ts already turns signed-out visitors away; auth.protect() checks again here.
+// Every earlier month, read-only. proxy.ts already turns signed-out visitors away; requirePreferences() checks again
+// here, and sends a user who hasn't finished onboarding to /onboarding.
 export default function HistoryPage({ searchParams }: { searchParams: Promise<SearchParams> }) {
   return (
     <Suspense>
@@ -26,7 +27,7 @@ export default function HistoryPage({ searchParams }: { searchParams: Promise<Se
 }
 
 async function History({ searchParams }: { searchParams: Promise<SearchParams> }) {
-  await auth.protect();
+  await requirePreferences(); // signed in (auth.protect) and onboarded
   const current = await thisMonth();
   const state = parseHistoryParams(await searchParams, current);
   const [months, entries, saved, genres, timeZone] = await Promise.all([

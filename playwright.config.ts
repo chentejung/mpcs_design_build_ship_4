@@ -25,6 +25,7 @@ export default defineConfig({
       dependencies: ["clerk setup"],
       fullyParallel: false,
       workers: 1, // every signed-in spec shares test users A and B and their rows
+      timeout: 90_000, // multi-account flows use live Clerk and Supabase, even with TMDB fixtures
       use: { ...devices["Desktop Firefox"] },
     },
     { name: "live", testMatch: /live\.spec/, use: { ...devices["Desktop Firefox"], baseURL: `http://localhost:${LIVE}` } },

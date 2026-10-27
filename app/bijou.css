@@ -1,0 +1,41 @@
+@layer components {
+  /* Feed links share the genre marquee's frame, depth, bulbs and selected treatment. */
+  [data-system="pulp"] .bijou-feed[aria-current="page"] {
+    --face: var(--ds-selected);
+    --bulb: var(--ds-bulb-on);
+    --bulb-alt: var(--ds-bulb-hot);
+    color: var(--ds-on-selected);
+  }
+  .bijou-genres > .ds-chip-row { padding-right: 7px; }
+  .bijou-more-genres summary {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-height: 44px;
+    width: fit-content;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+  .bijou-more-genres summary::-webkit-details-marker { display: none; }
+  .bijou-more-genres summary span { font-size: 22px; }
+  .bijou-more-genres[open] summary span { rotate: 45deg; }
+  .bijou-more-genres[open] { padding-bottom: 8px; }
+  .bijou-more-genres summary:focus-visible {
+    outline: 3px solid var(--ds-focus);
+    outline-offset: 3px;
+  }
+  .bijou-preferences { max-width: 52rem; padding-block: 40px; }
+  .bijou-preferences fieldset { margin-block: 28px; }
+  .bijou-preferences legend { margin-bottom: 12px; }
+  .bijou-preference-genres { display: flex; flex-wrap: wrap; gap: 12px; padding: 4px 8px 8px 0; }
+  .bijou-preference-genres .ds-chip { min-height: 52px; }
+  .bijou-preference-genres .ds-genre-icon { width: 32px; height: 32px; }
+  .bijou-genre-choice { position: relative; cursor: pointer; }
+  .bijou-genre-choice input { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; z-index: 1; cursor: pointer; }
+  .bijou-genre-choice input:focus-visible + .ds-chip { outline: 3px solid var(--ds-focus); outline-offset: 4px; }
+  [data-system="pulp"] .bijou-genre-choice .ds-chip[data-selected="true"] { --face: var(--ds-selected); --bulb: var(--ds-bulb-on); --bulb-alt: var(--ds-bulb-hot); color: var(--ds-on-selected); }
+  .bijou-genre-choice input:disabled + .ds-chip { opacity: .65; cursor: wait; }
+  .bijou-choice-mark { display: inline-block; width: 1em; }
+  .bijou-preference-error { margin-top: 12px; font-weight: 700; }
+}

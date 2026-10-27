@@ -5,7 +5,8 @@
 // so this measures the policies; docs/rls-isolation-test.md records it failing under a loosened select policy.
 import { expect, test, type Browser, type Page } from "@playwright/test";
 import {
-  alreadySaved, andWaitForServer, card, clearThisMonth, expectListCount, listRows, saveButton, signIn, skipWithoutTestUsers, USER_A, USER_B, visit,
+  alreadySaved, andWaitForServer, card, clearThisMonth, expectListCount, listRows, saveButton, signIn, skipWithoutTestUsers,
+  userDatabase, USER_A, USER_B, visit,
 } from "./signed-in";
 import { nowPlaying } from "./tmdb-fixtures";
 
@@ -55,6 +56,11 @@ async function expectOnlyOwn(page: Page, own: string, other: string, ownHistory:
   // Not even by searching for it.
   await visit(page, `/my-list/history?q=${encodeURIComponent(otherHistory.titles[0])}`);
   await expect(page.getByText("No films here!")).toBeVisible();
+  // And at the database itself, as this user's real session: no user_id filter can mask a broken SELECT policy.
+  const db = await userDatabase(page);
+  const history = await db.from("movie_list_entries").select("title").eq("month", "2026-09-01");
+  expect(history.error).toBeNull();
+  expect(history.data!.map((row) => row.title).sort()).toEqual([...ownHistory.titles].sort());
 }
 
 test("each user sees only their own Entries", async ({ browser }) => {
