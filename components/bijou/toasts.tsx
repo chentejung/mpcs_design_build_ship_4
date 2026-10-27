@@ -5,6 +5,7 @@
 import { createContext, startTransition, useCallback, useContext, useEffect, useMemo, useOptimistic, useReducer, useRef } from "react";
 import { undoChange } from "@/app/actions/entries";
 import { Toast } from "@/components/system/controls";
+import { UNDO_FAILED } from "@/lib/toast-messages";
 import { countChange, EMPTY, ERROR_MS, toastReducer, UNDO_MS, undoFor, type UndoWrite } from "@/lib/undo";
 
 type Toasts = {
@@ -58,7 +59,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       try {
         await undoChange(write);
       } catch {
-        failed("Couldn’t undo that. Try again.");
+        failed(UNDO_FAILED);
       }
     });
   };

@@ -7,6 +7,7 @@ import {
   andWaitForServer, clearThisMonth, entry, errorToast, expectListCount, expectTotals, listRows, notice, removeButton, saveButton, saveFromBrowse,
   sectionRows, signIn, skipWithoutTestUsers, undoButton, USER_A, watchedSwitch,
 } from "./signed-in";
+import { expectFitsWidth, PHONE_WIDTHS } from "./checks";
 import { nowPlaying } from "./tmdb-fixtures";
 
 test.describe.configure({ mode: "serial" });
@@ -122,7 +123,7 @@ test("a failed write leaves the list as the database has it, with an error toast
   );
 
   await watchedSwitch(page, first).click();
-  await expect(errorToast(page)).toContainText(`Couldn’t mark ${first} watched`);
+  await expect(errorToast(page)).toContainText(`Couldn’t mark ${first} Watched`);
   await expect(sectionRows(page, "Not watched yet")).toHaveText([new RegExp(first), new RegExp(third)]);
   await expect(watchedSwitch(page, first)).toHaveAttribute("aria-checked", "false");
   await expectTotals(page, "2 films · 0 watched · 3h 49m to go");
@@ -174,9 +175,39 @@ test("an empty month shows the Pulp empty state, with the way back to Browse", a
   await page.goto("/my-list");
   await expectTotals(page, "0 films · 0 watched · 0m to go");
   await expect(page.getByText("Nothing saved yet!")).toBeVisible();
+  for (const width of PHONE_WIDTHS) {
+    await expectFitsWidth(page, width, "My List, empty");
+    expect(await totalsLineBreaks(page), `the totals at ${width}px`).toEqual([]);
+  }
+  await page.setViewportSize({ width: 1280, height: 720 });
   await page.getByRole("main").getByRole("link", { name: "Browse films" }).click();
   await expect(page).toHaveURL("/");
 });
+
+// The totals line ("OCTOBER 2026 · 2 films · 1 watched · 2h 0m to go") wraps only at its dots: the parts it splits
+// inside, if any.
+async function totalsLineBreaks(page: Page) {
+  return page.getByRole("main").getByText(/^[A-Z]+ \d{4} · \d+ films? · /).evaluate((p) => {
+    const chars: { ch: string; top: number }[] = [];
+    const walk = document.createTreeWalker(p, NodeFilter.SHOW_TEXT);
+    for (let n = walk.nextNode(); n; n = walk.nextNode())
+      for (let i = 0; i < n.textContent!.length; i++) {
+        const r = document.createRange();
+        r.setStart(n, i);
+        r.setEnd(n, i + 1);
+        chars.push({ ch: n.textContent![i], top: Math.round(r.getBoundingClientRect().top) });
+      }
+    const parts: { text: string; tops: Set<number> }[] = [{ text: "", tops: new Set() }];
+    for (const { ch, top } of chars) {
+      if (ch === "·") parts.push({ text: "", tops: new Set() });
+      else if (ch.trim()) {
+        parts.at(-1)!.text += ch;
+        parts.at(-1)!.tops.add(top);
+      } else parts.at(-1)!.text += " ";
+    }
+    return parts.filter((part) => part.tops.size > 1).map((part) => part.text.trim());
+  });
+}
 
 // Phone layouts, as tests/e2e/layout.spec.ts checks the signed-out pages: nothing scrolls sideways and nothing runs into
 // anything else, in both views, from the smallest phones up. Signed in, so it runs here on the desktop project.
@@ -190,10 +221,9 @@ test("on phones My List keeps to the screen, and each film's title, toggle and R
 
   for (const view of ["Cards", "Rows"]) {
     await page.getByText(view, { exact: true }).click();
-    for (const width of [320, 360, 390]) {
-      await page.setViewportSize({ width, height: 800 });
-      const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
-      expect(scrollWidth, `${view} at ${width}px is ${scrollWidth}px wide`).toBeLessThanOrEqual(width);
+    for (const width of PHONE_WIDTHS) {
+      await expectFitsWidth(page, width, `My List in ${view}`);
+      expect(await totalsLineBreaks(page), `the totals at ${width}px`).toEqual([]);
       for (const part of [page.getByRole("link", { name: "The Bijou" }), page.getByRole("heading", { level: 1 })]) {
         const b = await box(part);
         expect(b.x).toBeGreaterThanOrEqual(0);

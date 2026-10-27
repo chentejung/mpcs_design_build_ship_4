@@ -20,7 +20,8 @@ export function SiteTabs({ signedIn, month, count }: { signedIn: boolean; month:
           </Link>
         )}
       </nav>
-      {signedIn && <UserButton />}
+      {/* Its slot is kept from the first paint, so the tabs don't jump aside when Clerk's account menu loads. */}
+      {signedIn && <span className="inline-flex size-11 items-center justify-center"><UserButton /></span>}
       {!signedIn && (
         <SignInButton mode="modal">
           <button type="button" className={buttonClass("primary")}>Sign in</button>

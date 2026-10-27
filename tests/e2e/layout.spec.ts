@@ -1,8 +1,9 @@
 // Phone layouts: nothing scrolls sideways and nothing runs into anything else, from the smallest phones up.
 import { expect, test, type Locator, type Page } from "@playwright/test";
+import { expectFitsWidth, PHONE_WIDTHS as widths } from "./checks";
 
-const pages = ["/", "/?feed=top-rated", "/?feed=top-rated&genre=10770", "/?q=alien", "/?q=zqxjvwk"];
-const widths = [320, 360, 390];
+// Both feeds, a genre with no films, a search and a search with no results, and the sign-in page.
+const pages = ["/", "/?feed=top-rated", "/?feed=top-rated&genre=10770", "/?q=alien", "/?q=zqxjvwk", "/sign-in"];
 
 // Viewport sizes are set per test, so run them once, on the phone project.
 test.beforeEach(({}, info) => test.skip(info.project.name !== "phone", "phone layouts"));
@@ -18,11 +19,10 @@ async function open(page: Page, path: string, width: number) {
 }
 
 for (const width of widths) {
-  test(`no page scrolls sideways at ${width}px`, async ({ page }) => {
+  test(`no page scrolls sideways or runs one control into another at ${width}px`, async ({ page }) => {
     for (const path of pages) {
       await open(page, path, width);
-      const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth);
-      expect(scrollWidth, `${path} is ${scrollWidth}px wide`).toBeLessThanOrEqual(width);
+      await expectFitsWidth(page, width, path);
     }
   });
 
