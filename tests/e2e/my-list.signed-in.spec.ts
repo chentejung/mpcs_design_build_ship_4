@@ -4,8 +4,9 @@
 // share the user, whose current-month Entries are cleared before each one.
 import { expect, test, type Locator, type Page } from "@playwright/test";
 import {
-  andWaitForServer, clearThisMonth, entry, errorToast, expectListCount, expectTotals, listRows, notice, removeButton, saveButton, saveFromBrowse,
-  sectionRows, signIn, skipWithoutTestUsers, undoButton, USER_A, watchedSwitch,
+  andWaitForServer, clearThisMonth, entry, errorToast, expectListCount, expectTotals, listRows, notice, removeButton,
+  saveButton, saveFromBrowse, sectionRows, signIn, skipWithoutTestUsers, undoButton, USER_A, watchedSwitch, visit,
+  reload,
 } from "./signed-in";
 import { expectFitsWidth, PHONE_WIDTHS } from "./checks";
 import { nowPlaying } from "./tmdb-fixtures";
@@ -31,7 +32,7 @@ test.beforeEach(async ({ page }) => {
 
 test("marking Watched moves a film to Watched and updates the totals; unmarking moves it back", async ({ page }) => {
   await saveFromBrowse(page, [first, third]);
-  await page.goto("/my-list");
+  await visit(page, "/my-list");
   await expectTotals(page, "2 films · 0 watched · 3h 49m to go");
   await expect(sectionRows(page, "Not watched yet")).toHaveText([new RegExp(first), new RegExp(third)]);
   await expect(sectionRows(page, "Watched")).toHaveCount(0);
@@ -42,7 +43,7 @@ test("marking Watched moves a film to Watched and updates the totals; unmarking 
   await expect(watchedSwitch(page, first)).toHaveAttribute("aria-checked", "true");
   await expectTotals(page, "2 films · 1 watched · 2h 0m to go");
 
-  await page.reload();
+  await reload(page);
   await expect(sectionRows(page, "Watched")).toHaveText([new RegExp(first)]);
   await expectTotals(page, "2 films · 1 watched · 2h 0m to go");
 
@@ -54,22 +55,22 @@ test("marking Watched moves a film to Watched and updates the totals; unmarking 
 
 test("Remove takes a film off this month's list, and Browse shows it as Save again", async ({ page }) => {
   await saveFromBrowse(page, [first, third]);
-  await page.goto("/my-list");
+  await visit(page, "/my-list");
   await andWaitForServer(page, () => removeButton(page, first).click());
   await expect(listRows(page)).toHaveText([new RegExp(third)]);
   await expect(notice(page)).toContainText(`Removed ${first}`);
   await expectTotals(page, "1 film · 0 watched · 2h 0m to go");
   await expectListCount(page, 1);
 
-  await page.goto("/");
+  await visit(page, "/");
   await expect(saveButton(page, first)).toBeVisible();
 });
 
 test("Undo of Remove puts back the very same Entry, with its added and watched dates", async ({ page }) => {
   await saveFromBrowse(page, [first, third]);
-  await page.goto("/my-list");
+  await visit(page, "/my-list");
   await andWaitForServer(page, () => watchedSwitch(page, first).click());
-  await page.reload();
+  await reload(page);
   const before = await dates(page, first);
   expect(before).toHaveLength(2); // added and watched
 
@@ -80,7 +81,7 @@ test("Undo of Remove puts back the very same Entry, with its added and watched d
   await expect(sectionRows(page, "Watched")).toHaveText([new RegExp(first)]);
   await expectListCount(page, 2);
 
-  await page.reload();
+  await reload(page);
   await expect(sectionRows(page, "Watched")).toHaveText([new RegExp(first)]);
   expect(await dates(page, first)).toEqual(before);
   await expectTotals(page, "2 films · 1 watched · 2h 0m to go");
@@ -88,20 +89,20 @@ test("Undo of Remove puts back the very same Entry, with its added and watched d
 
 test("Undo of a Watched change restores the previous watched date exactly", async ({ page }) => {
   await saveFromBrowse(page, [first]);
-  await page.goto("/my-list");
+  await visit(page, "/my-list");
 
   // Mark, then Undo: Not watched yet again.
   await watchedSwitch(page, first).click();
   await expect(sectionRows(page, "Watched")).toHaveCount(1);
   await andWaitForServer(page, () => undoButton(page).click());
   await expect(sectionRows(page, "Not watched yet")).toHaveText([new RegExp(first)]);
-  await page.reload();
+  await reload(page);
   await expect(sectionRows(page, "Not watched yet")).toHaveText([new RegExp(first)]);
   await expect(watchedSwitch(page, first)).toHaveAttribute("aria-checked", "false");
 
   // Mark for real, then unmark, then Undo: Watched again, on the first date, not a new one.
   await andWaitForServer(page, () => watchedSwitch(page, first).click());
-  await page.reload();
+  await reload(page);
   const watched = await dates(page, first);
   expect(watched).toHaveLength(2);
   await watchedSwitch(page, first).click();
@@ -110,13 +111,13 @@ test("Undo of a Watched change restores the previous watched date exactly", asyn
   await andWaitForServer(page, () => undoButton(page).click());
   await expect(sectionRows(page, "Watched")).toHaveText([new RegExp(first)]);
   await expectTotals(page, "1 film · 1 watched · 0m to go");
-  await page.reload();
+  await reload(page);
   expect(await dates(page, first)).toEqual(watched);
 });
 
 test("a failed write leaves the list as the database has it, with an error toast", async ({ page }) => {
   await saveFromBrowse(page, [first, third]);
-  await page.goto("/my-list");
+  await visit(page, "/my-list");
   // Server Actions are POSTs carrying a Next-Action header; failing them is a network that drops the write.
   await page.route("**/*", (route) =>
     route.request().method() === "POST" && route.request().headers()["next-action"] ? route.abort() : route.fallback(),
@@ -136,14 +137,14 @@ test("a failed write leaves the list as the database has it, with an error toast
 
   await page.unrouteAll({ behavior: "ignoreErrors" });
   await page.route("https://image.tmdb.org/**", (route) => route.abort());
-  await page.reload();
+  await reload(page);
   await expect(sectionRows(page, "Not watched yet")).toHaveText([new RegExp(first), new RegExp(third)]);
   await expect(sectionRows(page, "Watched")).toHaveCount(0);
 });
 
 test("cards or rows, and the sort, are remembered on the device", async ({ page }) => {
   await saveFromBrowse(page, [first, third, fourth]);
-  await page.goto("/my-list");
+  await visit(page, "/my-list");
   const view = (name: "Cards" | "Rows") => page.getByRole("radio", { name });
   const sort = page.getByRole("combobox", { name: "Sort by" });
   const titles = (...t: string[]) => t.map((x) => new RegExp(x));
@@ -162,7 +163,7 @@ test("cards or rows, and the sort, are remembered on the device", async ({ page 
   await sort.selectOption({ label: "Runtime" });
   await expect(listRows(page)).toHaveText(titles(fourth, first, third)); // 95, 109, 120 minutes
 
-  await page.reload();
+  await reload(page);
   await expect(view("Rows")).toBeChecked();
   await expect(sort).toHaveValue("runtime");
   await expect(listRows(page)).toHaveText(titles(fourth, first, third));
@@ -172,7 +173,7 @@ test("cards or rows, and the sort, are remembered on the device", async ({ page 
 });
 
 test("an empty month shows the Pulp empty state, with the way back to Browse", async ({ page }) => {
-  await page.goto("/my-list");
+  await visit(page, "/my-list");
   await expectTotals(page, "0 films · 0 watched · 0m to go");
   await expect(page.getByText("Nothing saved yet!")).toBeVisible();
   for (const width of PHONE_WIDTHS) {
@@ -213,7 +214,7 @@ async function totalsLineBreaks(page: Page) {
 // anything else, in both views, from the smallest phones up. Signed in, so it runs here on the desktop project.
 test("on phones My List keeps to the screen, and each film's title, toggle and Remove apart", async ({ page }) => {
   await saveFromBrowse(page, [first, third]);
-  await page.goto("/my-list");
+  await visit(page, "/my-list");
   await andWaitForServer(page, () => watchedSwitch(page, first).click());
   const box = async (l: Locator) => (await l.boundingBox())!;
   const apart = (a: { x: number; y: number; width: number; height: number }, b: typeof a) =>

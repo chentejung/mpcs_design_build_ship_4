@@ -24,6 +24,12 @@ export async function visit(page: Page, url: string) {
   await clerk.loaded({ page });
 }
 
+// Reloads the page, then waits for Clerk as visit() does.
+export async function reload(page: Page) {
+  await page.reload();
+  await clerk.loaded({ page });
+}
+
 export const myListTab = (page: Page) => page.getByRole("navigation", { name: "Site" }).getByRole("link", { name: /^My List/ });
 
 // "My List · Oct (2)" → 2

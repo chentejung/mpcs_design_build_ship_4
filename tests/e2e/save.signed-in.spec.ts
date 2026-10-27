@@ -3,8 +3,8 @@
 // test at a time: the tests share the user, whose current-month Entries are cleared before each one.
 import { expect, test } from "@playwright/test";
 import {
-  alreadySaved, andWaitForServer, card, clearThisMonth, errorToast, expectListCount, listRows, notice, saveButton, signIn,
-  skipWithoutTestUsers, undoButton, USER_A,
+  alreadySaved, andWaitForServer, card, clearThisMonth, errorToast, expectListCount, listRows, notice, saveButton,
+  signIn, skipWithoutTestUsers, undoButton, USER_A, visit, reload,
 } from "./signed-in";
 import { nowPlaying } from "./tmdb-fixtures";
 
@@ -17,7 +17,7 @@ test.beforeEach(async ({ page }) => {
   await page.route("https://image.tmdb.org/**", (route) => route.abort());
   await signIn(page, USER_A!);
   await clearThisMonth(page);
-  await page.goto("/");
+  await visit(page, "/");
 });
 
 test("Save adds the film to this month: the card turns Already saved and the tab counts it", async ({ page }) => {
@@ -36,10 +36,10 @@ test("Save adds the film to this month: the card turns Already saved and the tab
   await page.keyboard.press("Enter");
   await expectListCount(page, 1);
 
-  await page.reload();
+  await reload(page);
   await expect(alreadySaved(page, first)).toBeVisible();
   await expect(saveButton(page, second)).toBeVisible();
-  await page.goto("/my-list");
+  await visit(page, "/my-list");
   await expect(listRows(page)).toHaveText([new RegExp(first)]);
 });
 
@@ -52,9 +52,9 @@ test("Undo within 3 seconds takes the Save back, and the count with it", async (
   await expectListCount(page, 0);
   await expect(notice(page)).toHaveCount(0);
 
-  await page.reload();
+  await reload(page);
   await expect(saveButton(page, first)).toBeVisible();
-  await page.goto("/my-list");
+  await visit(page, "/my-list");
   await expect(listRows(page)).toHaveCount(0);
 });
 
@@ -67,7 +67,7 @@ test("the Undo toast is gone after 3 seconds, and the Entry stays", async ({ pag
 
   await expect(alreadySaved(page, first)).toBeVisible();
   await expectListCount(page, 1);
-  await page.goto("/my-list");
+  await visit(page, "/my-list");
   await expect(listRows(page)).toHaveText([new RegExp(first)]);
 });
 
@@ -85,7 +85,7 @@ test("a failed save rolls back, with an error toast", async ({ page }) => {
 
   await page.unrouteAll({ behavior: "ignoreErrors" });
   await page.route("https://image.tmdb.org/**", (route) => route.abort());
-  await page.goto("/my-list");
+  await visit(page, "/my-list");
   await expect(listRows(page)).toHaveCount(0);
 });
 
@@ -93,7 +93,7 @@ test("the same film can't be saved twice in one month", async ({ page, context }
   // A second tab still showing Save, from before the first tab saved it.
   const other = await context.newPage();
   await other.route("https://image.tmdb.org/**", (route) => route.abort());
-  await other.goto("/");
+  await visit(other, "/");
   await expect(saveButton(other, first)).toBeVisible();
 
   await andWaitForServer(page, () => saveButton(page, first).click());
@@ -106,7 +106,7 @@ test("the same film can't be saved twice in one month", async ({ page, context }
   await expect(errorToast(other)).toHaveCount(0);
   await expectListCount(other, 1);
 
-  await page.goto("/my-list");
+  await visit(page, "/my-list");
   await expect(listRows(page)).toHaveText([new RegExp(first)]);
   await expect(card(page, first)).toHaveCount(0);
 });
