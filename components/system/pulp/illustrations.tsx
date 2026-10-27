@@ -3,7 +3,8 @@
 export type PulpIllustration =
   | "look-empty" | "rocket-engraved" | "planet-engraved" | "saucer-engraved"
   | "skyline-engraved" | "thriller-engraved" | "comedy-engraved" | "horror-engraved"
-  | "action-engraved" | "romance-engraved" | "blast-engraved";
+  | "action-engraved" | "romance-engraved" | "blast-engraved"
+  | "adventure-engraved" | "crime-engraved" | "documentary-engraved" | "drama-engraved" | "family-engraved" | "fantasy-engraved" | "history-engraved" | "music-engraved" | "mystery-engraved" | "tv-movie-engraved" | "war-engraved" | "western-engraved";
 
 export const illustrationPath = (name: PulpIllustration) => `/bijou/art/${name}.webp`;
 

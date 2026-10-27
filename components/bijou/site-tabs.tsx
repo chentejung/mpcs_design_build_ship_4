@@ -19,6 +19,7 @@ export function SiteTabs({ signedIn, month, count }: { signedIn: boolean; month:
             My List · {month}{count !== null && ` (${count + countMoved})`}
           </Link>
         )}
+        {signedIn && <Link href="/preferences" aria-current={path === "/preferences" ? "page" : undefined} className={buttonClass("secondary")}>Preferences</Link>}
       </nav>
       {/* Its slot is kept from the first paint, so the tabs don't jump aside when Clerk's account menu loads. */}
       {signedIn && <span className="inline-flex size-11 items-center justify-center"><UserButton /></span>}

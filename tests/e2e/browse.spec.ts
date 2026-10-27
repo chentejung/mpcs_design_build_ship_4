@@ -40,12 +40,12 @@ test("a genre chip narrows the whole feed, and Load more keeps the genre", async
   await expect(page).toHaveURL("/?feed=top-rated&genre=878");
   await expect(genreChip(page, "Science Fiction")).toHaveAttribute("aria-current", "true");
   await expect(films(page)).toHaveCount(20);
-  for (const card of await films(page).all()) await expect(card).toContainText("Science Fiction");
+  await expect(films(page)).toContainText(Array(20).fill("Science Fiction"));
 
   await page.getByRole("button", { name: "Load more" }).click();
   await expect(films(page)).toHaveCount(40);
   await expect(titles(page).nth(20)).toHaveText(topRated(2, "with_genres=878").results[0].title);
-  for (const card of (await films(page).all()).slice(20)) await expect(card).toContainText("Science Fiction");
+  await expect(films(page)).toContainText(Array(40).fill("Science Fiction"));
 });
 
 test("Load more adds the next 20 of Now Playing", async ({ page }) => {

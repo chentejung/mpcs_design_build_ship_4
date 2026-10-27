@@ -2,10 +2,10 @@
 // (AGENTS.md → Routes). Signed-out visitors are redirected to sign in and never reach the page.
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-const isMyList = createRouteMatcher(["/my-list(.*)"]);
+const isProtected = createRouteMatcher(["/my-list(.*)", "/onboarding(.*)", "/preferences(.*)"]);
 
 export default clerkMiddleware(async (auth, req) => {
-  if (isMyList(req)) await auth.protect();
+  if (isProtected(req)) await auth.protect();
 });
 
 export const config = {

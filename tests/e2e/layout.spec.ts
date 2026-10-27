@@ -50,17 +50,23 @@ for (const width of widths) {
   });
 }
 
-test("genre chips all wrap into view on a phone and every one can be reached", async ({ page }) => {
+test("More genres reveals every illustrated genre on a phone without sideways scrolling", async ({ page }) => {
   await open(page, "/", 320);
   const chips = page.getByRole("group", { name: "Filter by genre" }).getByRole("link");
+  await expect(page.getByRole("link", { name: "Western", exact: true })).toBeHidden();
+  await page.getByText("More genres", { exact: false }).click();
   expect(await chips.count()).toBe(20); // All + TMDB's 19 genres
   for (const chip of await chips.all()) {
+    await expect(chip).toBeVisible();
+    await expect(chip.locator("svg.ds-genre-icon")).toHaveCount(1);
     const b = await box(chip);
     expect(b.x).toBeGreaterThanOrEqual(0);
     expect(b.x + b.width).toBeLessThanOrEqual(320);
   }
-  await chips.last().click();
-  await expect(chips.last()).toHaveAttribute("aria-current", "true");
+  await page.getByRole("link", { name: "Western", exact: true }).click();
+  await expect(page.getByRole("link", { name: "Western", exact: true })).toHaveAttribute("aria-current", "true");
+  await page.reload();
+  await expect(page.getByRole("link", { name: "Western", exact: true })).toBeVisible();
 });
 
 test("the hero's screening lines appear only above phone width", async ({ page }) => {

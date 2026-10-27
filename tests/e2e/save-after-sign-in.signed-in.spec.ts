@@ -98,3 +98,42 @@ test("closing the modal saves nothing, even after a later sign-in", async ({ pag
   await visit(page, "/my-list");
   await expect(listRows(page)).toHaveCount(0);
 });
+
+// A brand-new account has to finish onboarding (AGENTS.md → Product rules 9) before Browse lets it in, so the Film
+// pressed before signing up has to come through /onboarding too. The account is made through the modal's own sign-up
+// form, with a +clerk_test address (code 424242), and deleted afterwards through Clerk's Backend API.
+test("signing up through that modal saves the film once onboarding is done", async ({ page }) => {
+  const email = `bijou-signup-${Date.now()}+clerk_test@example.com`;
+  try {
+    await signOutToBrowse(page);
+    await saveButton(page, first).click();
+    const modal = page.getByRole("dialog");
+    await modal.getByRole("link", { name: "Sign up" }).click();
+    await modal.getByLabel("Email address").fill(email);
+    await modal.getByLabel("Password", { exact: true }).fill(`Bj-${crypto.randomUUID()}`);
+    await modal.getByRole("button", { name: "Continue", exact: true }).click();
+    await expect(modal.getByRole("heading", { name: "Verify your email" })).toBeVisible();
+    await modal.getByRole("textbox", { name: "Enter verification code" }).pressSequentially("424242");
+
+    await expect(page).toHaveURL(/\/onboarding/);
+    await page.getByLabel("What should we call you?").fill("New Bijou");
+    await page.getByRole("checkbox", { name: "Action", exact: true }).check();
+    await page.getByRole("button", { name: "Start browsing" }).click();
+
+    await expect(page.getByText("Welcome, New Bijou!")).toBeVisible();
+    await expect(alreadySaved(page, first)).toBeVisible();
+    await expect(notice(page)).toContainText(`Saved ${first}`);
+    await expectListCount(page, 1);
+    await expect(page).not.toHaveURL(/[?&]save=/);
+  } finally {
+    await clearThisMonth(page).catch(() => {}); // the new account's Entries, through the app: no webhook removes them
+    await deleteClerkUser(email);
+  }
+});
+
+async function deleteClerkUser(email: string) {
+  const headers = { Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}` };
+  const found = await fetch(`https://api.clerk.com/v1/users?email_address=${encodeURIComponent(email)}`, { headers });
+  for (const user of (await found.json()) as { id: string }[])
+    await fetch(`https://api.clerk.com/v1/users/${user.id}`, { method: "DELETE", headers });
+}

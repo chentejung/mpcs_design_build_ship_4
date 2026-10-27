@@ -73,7 +73,11 @@ export const pulp: DesignSystem = {
     border: 0.85,
     onSurface: "newsprint",
     mutedOnSurface: 0.8,
-    categories: { thriller: "sepia", comedy: "mustard", animation: "peach", action: "red", "science-fiction": "ink", romance: "red", horror: "ink" },
+    categories: {
+      thriller: "sepia", comedy: "mustard", animation: "peach", action: "red", "science-fiction": "ink", romance: "red", horror: "ink",
+      adventure: "mustard", crime: "sepia", documentary: "peach", drama: "red", family: "mustard", fantasy: "ink",
+      history: "peach", music: "red", mystery: "sepia", "tv-movie": "mustard", war: "sepia", western: "peach",
+    },
   },
   type: {
     Display: { font: font.fugaz, size: 64, weight: 400 },
