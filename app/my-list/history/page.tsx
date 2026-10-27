@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+import { requirePreferences } from "@/lib/preferences";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -16,7 +16,7 @@ export default function HistoryPage() {
 }
 
 async function History() {
-  await auth.protect();
+  await requirePreferences();
   return (
     <section className="pt-8 sm:pt-12">
       <p className="ds-label"><Link href="/my-list" className="ds-link">← This month</Link></p>

@@ -12,6 +12,7 @@ import { SignOff } from "@/components/system/motifs";
 import { SystemTheme } from "@/components/system/theme";
 import { fontVariables } from "./fonts";
 import "./globals.css";
+import "./bijou.css";
 
 export const metadata: Metadata = {
   title: { template: `%s — ${SITE_NAME}`, default: SITE_NAME },
@@ -24,7 +25,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={fontVariables}>
       <body>
-        <ClerkProvider>
+        <ClerkProvider signUpForceRedirectUrl="/onboarding">
           <TimeZoneCookie />
           <SystemTheme className="min-h-screen">
             <ToastProvider>

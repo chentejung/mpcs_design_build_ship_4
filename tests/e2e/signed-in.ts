@@ -2,6 +2,8 @@
 // current-month Entries through the app's own Remove (AGENTS.md → Testing), and find the controls a user would.
 import { clerk, setupClerkTestingToken } from "@clerk/testing/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import { createClient } from "@supabase/supabase-js";
+import type { Database } from "../../lib/database.types";
 
 export const USER_A = process.env.TEST_USER_A_EMAIL;
 export const USER_B = process.env.TEST_USER_B_EMAIL;
@@ -9,12 +11,32 @@ export const USER_B = process.env.TEST_USER_B_EMAIL;
 export const skipWithoutTestUsers = () =>
   test.skip(!USER_A || !USER_B, "run scripts/create-test-users.mjs first");
 
+// Direct RLS probes use the real browser session and publishable key, never a privileged database credential.
+export async function userDatabase(page: Page) {
+  await clerk.loaded({ page });
+  await expect.poll(() => page.evaluate(() => !!window.Clerk.session)).toBe(true);
+  const token = await page.evaluate(() => window.Clerk.session!.getToken());
+  expect(token).toBeTruthy();
+  return createClient<Database>(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_KEY!, {
+    accessToken: async () => token,
+  });
+}
+
 export async function signIn(page: Page, emailAddress: string) {
   await setupClerkTestingToken({ page });
   await page.goto("/");
   // By email: a Backend API sign-in token, so Clerk's new-device check on password sign-ins doesn't stop the test.
   await clerk.signIn({ page, emailAddress });
-  await page.waitForLoadState("networkidle"); // Clerk refreshes the page once the session is set
+  // Clerk refreshes the route after setActive. A second goto can race the onboarding redirect in Firefox.
+  await expect(page.getByRole("button", { name: /open user (button|menu)/i })).toBeVisible();
+  await expect(page.getByLabel("What should we call you?").or(page.getByText(/^Welcome, .+!$/))).toBeVisible();
+  if (new URL(page.url()).pathname === "/onboarding") {
+    await page.getByLabel("What should we call you?").fill(emailAddress === USER_A ? "Bijou A" : "Bijou B");
+    await page.getByRole("checkbox", { name: "Action", exact: true }).check();
+    await page.getByRole("button", { name: "Start browsing" }).click();
+    await expect(page).toHaveURL("/");
+  }
+  await expect(page.getByText(/^Welcome, .+!$/)).toBeVisible();
 }
 
 export const myListTab = (page: Page) => page.getByRole("navigation", { name: "Site" }).getByRole("link", { name: /^My List/ });

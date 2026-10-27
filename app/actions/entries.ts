@@ -3,6 +3,7 @@
 // of the deleted row this server signed, or for Undo of a Watched change the previous watched date; the Film's details come from TMDB here, the month from the tz cookie, and
 // user_id from the session token (AGENTS.md → Data model). Each action ends with refresh(), so the same response
 // carries the page re-rendered: the card's Already saved, My List's rows and the tab count.
+import { requirePreferences } from "@/lib/preferences";
 import { auth } from "@clerk/nextjs/server";
 import { refresh } from "next/cache";
 import { deleteEntry, insertEntry, reinsertEntry, setWatchedAt } from "@/lib/entries";
@@ -23,6 +24,7 @@ const isWatchedAt = (at: unknown): at is string | null => at === null || (typeof
 async function signedIn() {
   const { userId } = await auth();
   if (!userId) throw new Error("Sign in to change your list");
+  await requirePreferences();
   return userId;
 }
 

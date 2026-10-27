@@ -9,7 +9,7 @@ test("the masthead offers Browse and Sign in, but no My List", async ({ page }) 
   await expect(page.getByRole("banner").getByRole("button", { name: "Sign in" })).toBeVisible();
 });
 
-for (const path of ["/my-list", "/my-list/history"]) {
+for (const path of ["/my-list", "/my-list/history", "/onboarding", "/preferences"]) {
   test(`opening ${path} signed out leads to sign-in, never to the page`, async ({ page }) => {
     const pageRequests: number[] = [];
     page.on("response", (r) => { if (new URL(r.url()).pathname === path) pageRequests.push(r.status()); });

@@ -49,12 +49,14 @@ _Avoid_: "saved list" (there is no month-less list), "status" column, "plan".
    - mark / unmark Watched → restore the previous `watched_at`.
 7. **Signed-out visitors** can browse and search. Save opens Clerk's sign-in modal and, after sign-in, saves that
    Film automatically. `/my-list` requires sign-in (checked on the server).
-8. **No account deletion** in this iteration (disable it in Clerk's `<UserProfile />`). No profiles, settings or
-   webhook tables.
+8. **No account deletion** in this iteration (disable it in Clerk's `<UserProfile />`). No webhook tables. User preferences are the one account-settings table (owner request, October 2026).
+9. **Required onboarding:** after signup, require a customized name and at least one favorite genre. A complete
+   `user_preferences` row is the completion state; signed-in Browse, My List and their actions enforce it server-side.
+   Persist both answers before redirecting to Browse, greet by name, and allow changes at `/preferences`.
 
 ## Data model
 
-The schema is defined **only** by migrations. One table:
+The schema is defined **only** by migrations. Movie entries:
 
 ```sql
 create table public.movie_list_entries (
@@ -90,9 +92,16 @@ create index movie_list_entries_user_month on public.movie_list_entries (user_id
   (or, for Add it to this month, the source Entry's `id`; for Undo of Remove, the server-signed copy of the deleted
   row).
 
+### User preferences
+
+Migration `0005_user_preferences.sql` adds one row per Clerk user: `display_name` (1–50 characters),
+`favorite_genre_ids` (at least one valid TMDB genre), and creation/update timestamps. Ownership comes from the JWT
+column default. RLS permits only the owner to select, insert and update; the app cannot delete these rows.
+New and existing accounts without a row must complete `/onboarding`. A failed read or write cannot mark onboarding complete.
+
 ### Row-level security
 
-RLS is enabled on **every** table. Grant `select, insert, update, delete` to `authenticated` only; nothing to `anon`.
+RLS is enabled on **every** table. Grant entry CRUD to `authenticated` only; preferences allow select/insert/update. Nothing to `anon`.
 
 ```sql
 alter table public.movie_list_entries enable row level security;
@@ -152,11 +161,13 @@ trigger above is the backstop.
 | URL | Who | What |
 |---|---|---|
 | `/` | everyone | Browse: `?feed=now-playing\|top-rated` (default `now-playing`), `?genre=<tmdb id>`, `?q=<search>` |
-| `/my-list` | signed in | This month: Not watched yet and Watched sections, editable |
+| `/onboarding` | signed in, incomplete | Required name and favorite genres |
+| `/preferences` | onboarding complete | Edit name and favorite genres |
+| `/my-list` | onboarding complete | This month: Not watched yet and Watched sections, editable |
 | `/my-list/history` | signed in | History, read-only: `?month=YYYY-MM`, `?q=<title>`; none = all past months |
 
 Filters are **query parameters**, so they survive refresh and can be shared; invalid values are ignored, not 404s.
-A shared layout holds the masthead and tab bar: **Browse** always, **My List · Oct (n)** only when signed in, and
+A shared layout holds the masthead and tab bar: **Browse** always, **My List · Oct (n)** and **Preferences** only when signed in, and
 Clerk's Sign in / `UserButton`. The full Pulp hero shows on Browse; My List uses a slim masthead.
 My List's cards/rows view and sort (date added oldest-first default, title, year, runtime) live in `localStorage`.
 

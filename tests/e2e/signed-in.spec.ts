@@ -1,6 +1,6 @@
 // Signed in as test user A (scripts/create-test-users.mjs): My List appears, the account menu has no deletion, and
 // signing out takes My List away again. Desktop only, one test at a time: the tests share the user.
-import { clerk, setupClerkTestingToken } from "@clerk/testing/playwright";
+import { signIn } from "./signed-in";
 import { expect, test, type Page } from "@playwright/test";
 
 test.describe.configure({ mode: "serial" });
@@ -13,12 +13,7 @@ const myListTab = (page: Page) => page.getByRole("navigation", { name: "Site" })
 
 test.beforeEach(async ({ page }) => {
   test.skip(!process.env.TEST_USER_A_EMAIL, "run scripts/create-test-users.mjs first");
-  await setupClerkTestingToken({ page });
-  await page.goto("/");
-  // By email: a Backend API sign-in token, so Clerk's new-device check on password sign-ins doesn't stop the test.
-  await clerk.signIn({ page, emailAddress: process.env.TEST_USER_A_EMAIL! });
-  await page.waitForLoadState("networkidle"); // Clerk refreshes the page once the session is set
-  await page.goto("/");
+  await signIn(page, process.env.TEST_USER_A_EMAIL!);
 });
 
 test("signed in, the tab bar shows My List for this month, and it opens", async ({ page }) => {

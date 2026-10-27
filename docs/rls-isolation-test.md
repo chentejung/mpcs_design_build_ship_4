@@ -14,8 +14,9 @@ Entries through My List's Remove. Then:
 1. A saves film X (Street Fighter) on Browse; B saves film Y (Resident Evil). Each tab then reads `My List · Oct (1)`.
 2. A's My List lists X only; B's lists Y only.
 3. On Browse, A sees X as **Already saved** and Y as **Save**; B sees the reverse.
-4. Neither user's History shows the other's seeded History titles. (Until #9 builds the History list this check has
-   nothing to find; it starts to bite once #9 lands.)
+4. Neither user's History shows the other's seeded History titles. Because #9's History page is still a placeholder,
+   the test also queries September's seeded rows through each browser's real Clerk token and requires exactly that
+   user's three titles, without a `user_id` filter. This makes the database check meaningful before the History UI lands.
 5. Both users remove their film again, so the next run starts from an empty month.
 
 Command (desktop, signed-in project; `npx playwright test` starts the built app itself):
@@ -127,3 +128,23 @@ Running 2 tests using 1 worker
 - **Types** regenerated with the MCP `generate_typescript_types`: identical to `lib/database.types.ts`, since policies
   don't change the types.
 - The test stays in the suite and must stay green.
+
+## 4. Preferences activation (October 27, 2026)
+
+Migration `0005_user_preferences` was applied unchanged through MCP as version `20261027170259`. Generated types
+are committed with the migration in `748e677`. SQL inspection confirms that both tables have RLS enabled, the movie
+entry policies retain their original ownership predicates, and preferences grant only SELECT/INSERT/UPDATE to
+`authenticated`, with no grant to `anon`. The advisor still reports only the two pre-existing warnings above.
+
+`tests/e2e/preference-rls.signed-in.spec.ts` uses two real Clerk browser sessions and the publishable key against the
+hosted Data API. It first requires each unfiltered SELECT to return exactly the signed-in user's row. In both directions,
+reading or updating the other user's ID returns no rows, and a forged upsert is rejected with `42501`. Attempts to change
+ownership or creation time raise the trigger's `P0001`; deletion and anonymous access are denied with `42501`; blank
+names, empty genres and unknown genre IDs fail the constraints with `23514`. Final reads must match both original rows,
+including timestamps. Explicit-row predicates on these attack writes ensure they reach the RLS/trigger/constraint check
+rather than stopping at the database's bulk-write guard.
+
+The browser preferences test independently saves different names and genres for A and B and reloads both accounts to
+check persistence and separation. The fresh-signup test drives Clerk's actual email verification and asserts that Browse,
+My List, History and Preferences redirect to onboarding until both answers have saved. See [design review](design-review.md)
+for the final verification results and the deployment-preview limitation.

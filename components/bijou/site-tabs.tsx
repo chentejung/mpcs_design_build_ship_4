@@ -19,6 +19,7 @@ export function SiteTabs({ signedIn, month, count }: { signedIn: boolean; month:
             My List · {month}{count !== null && ` (${count + countMoved})`}
           </Link>
         )}
+        {signedIn && <Link href="/preferences" aria-current={path === "/preferences" ? "page" : undefined} className={buttonClass("secondary")}>Preferences</Link>}
       </nav>
       {signedIn && <UserButton />}
       {!signedIn && (

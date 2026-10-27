@@ -1,4 +1,4 @@
-import { auth } from "@clerk/nextjs/server";
+import { requirePreferences } from "@/lib/preferences";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -21,7 +21,7 @@ export default function MyListPage() {
 }
 
 async function MyList() {
-  await auth.protect();
+  await requirePreferences();
   const month = await thisMonth();
   const [entries, genres, timeZone] = await Promise.all([
     monthEntries(month),

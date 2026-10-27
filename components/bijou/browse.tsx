@@ -26,17 +26,16 @@ export async function Browse({ searchParams }: { searchParams: Promise<SearchPar
     <>
       <SearchForm state={state} />
       {!q && (
-        <>
-          <nav aria-label="Feeds" className="ds-tabs mb-5">
+          <nav aria-label="Feeds" className="ds-chip-row mb-5">
             {FEEDS.map((f) => (
-              <Link key={f.id} href={browseHref({ feed: f.id, genre })} aria-current={f.id === feed ? "page" : undefined} className="ds-tab">
+              <Link key={f.id} href={browseHref({ feed: f.id, genre })} aria-current={f.id === feed ? "page" : undefined} className="ds-chip bijou-feed">
+                <PulpGenreIcon id={f.id === "now-playing" ? "documentary" : "all"} className="ds-genre-icon" />
                 {f.label}
               </Link>
             ))}
           </nav>
-          {genres && <GenreChips genres={genres} feed={feed} selected={genre} />}
-        </>
       )}
+      {!q && genres && <GenreChips genres={genres} feed={feed} selected={genre} />}
       {/* Keyed, so each feed, genre and search shows the placeholders while its films arrive. */}
       <Suspense key={`${feed}-${genre}-${q}`} fallback={<CardSkeletons />}>
         {genres ? <FeedResults state={state} genres={genres} /> : <ProjectorJammed />}
@@ -62,6 +61,10 @@ function SearchForm({ state: { feed, genre, q } }: { state: BrowseState }) {
 }
 
 function GenreChips({ genres, feed, selected }: { genres: Genre[]; feed: Feed; selected: number | null }) {
+  // Keep a small starting set and the selected genre visible. Every other genre stays one disclosure away.
+  const featured = new Set([28, 35, 27, 10749, 878]);
+  const primary = genres.filter((g) => featured.has(g.id) || g.id === selected);
+  const more = genres.filter((g) => !featured.has(g.id) && g.id !== selected);
   const chip = (id: number | null, name: string) => {
     const art = id === null ? "all" : categoryByGenre[id];
     return (
@@ -72,9 +75,17 @@ function GenreChips({ genres, feed, selected }: { genres: Genre[]; feed: Feed; s
     );
   };
   return (
-    <div role="group" aria-label="Filter by genre" className="ds-chip-row">
-      {chip(null, "All")}
-      {genres.map((g) => chip(g.id, g.name))}
+    <div role="group" aria-label="Filter by genre" className="bijou-genres">
+      <div className="ds-chip-row">
+        {chip(null, "All")}
+        {primary.map((g) => chip(g.id, g.name))}
+      </div>
+      {more.length > 0 && (
+        <details className="bijou-more-genres" key={selected ?? "all"}>
+          <summary className="ds-label">More genres <span aria-hidden="true">+</span></summary>
+          <div className="ds-chip-row">{more.map((g) => chip(g.id, g.name))}</div>
+        </details>
+      )}
     </div>
   );
 }
