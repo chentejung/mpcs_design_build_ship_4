@@ -5,6 +5,7 @@ import "server-only";
 import type { Database } from "./database.types";
 import type { Snapshot } from "./films";
 import { supabase } from "./supabase";
+import type { RemovedEntry } from "./undo-token";
 
 export type Entry = Database["public"]["Tables"]["movie_list_entries"]["Row"];
 
@@ -54,8 +55,17 @@ export async function insertEntry(month: string, film: Snapshot): Promise<{ id: 
   return data;
 }
 
-// Deletes an Entry; RLS keeps it to the user's own, and the History trigger to a current month.
-export async function deleteEntry(id: string): Promise<void> {
-  const { error } = await supabase().from("movie_list_entries").delete().eq("id", id);
+// Deletes an Entry and returns the deleted row (null if there was none to delete). RLS keeps it to the user's own,
+// and the History trigger to a current month.
+export async function deleteEntry(id: string): Promise<Entry | null> {
+  const { data, error } = await supabase().from("movie_list_entries").delete().eq("id", id).select("*").maybeSingle();
   if (error) fail("removing an Entry", error);
+  return data;
+}
+
+// Undo of Remove: the exact deleted row back (same id, added_at and watched_at), from the copy the server signed
+// (lib/undo-token.ts). user_id is not in the copy; the column default fills it from the token, and RLS checks it.
+export async function reinsertEntry(entry: RemovedEntry): Promise<void> {
+  const { error } = await supabase().from("movie_list_entries").insert(entry);
+  if (error) fail("putting an Entry back", error);
 }

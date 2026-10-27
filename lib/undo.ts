@@ -6,8 +6,9 @@
 export const UNDO_MS = 3000;
 export const ERROR_MS = 5000; // an error has no Undo, but needs long enough to be read
 
-// What Undo writes back. Save (and, later, Add it to this month) is undone by deleting the Entry it made.
-export type UndoWrite = { kind: "delete-entry"; entryId: string };
+// What Undo writes back. Save (and, later, Add it to this month) is undone by deleting the Entry it made; Remove by
+// re-inserting the deleted row from the server-signed copy (lib/undo-token.ts).
+export type UndoWrite = { kind: "delete-entry"; entryId: string } | { kind: "reinsert-entry"; token: string };
 
 export type Toast = { seq: number; tone: "notice" | "error"; message: string; undo: UndoWrite | null };
 export type ToastState = { seq: number; toast: Toast | null };
@@ -44,4 +45,4 @@ export const undoFor = (state: ToastState, seq: number): UndoWrite | null =>
   state.toast?.seq === seq ? state.toast.undo : null;
 
 // How Undo changes the My List tab count.
-export const countChange = (undo: UndoWrite): number => (undo.kind === "delete-entry" ? -1 : 0);
+export const countChange = (undo: UndoWrite): number => (undo.kind === "delete-entry" ? -1 : 1);

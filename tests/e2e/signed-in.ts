@@ -39,14 +39,25 @@ export const notice = (page: Page) => page.getByRole("status").filter({ has: pag
 export const errorToast = (page: Page) => page.getByRole("alert").filter({ has: page.locator(".ds-toast") });
 export const undoButton = (page: Page) => notice(page).getByRole("button", { name: "Undo" });
 
-// Empties this month's list the way a user would: Remove, one Entry at a time.
+// Does `act` and waits for the Server Action it starts to answer. The page shows a change before the server has made it
+// (optimistic UI), so a test that reloads or leaves straight after would cut the write short.
+export async function andWaitForServer(page: Page, act: () => Promise<void>) {
+  const answered = page.waitForResponse((r) => r.request().method() === "POST" && !!r.request().headers()["next-action"]);
+  await act();
+  await (await answered).finished();
+}
+
+// Empties this month's list the way a user would: Remove, one Entry at a time. Each waits for its Undo toast, which
+// appears once the server has deleted the row, so leaving the page can't cut a removal short.
 export async function clearThisMonth(page: Page) {
   await page.goto("/my-list");
   await expect(page.getByRole("heading", { level: 1, name: "My List" })).toBeVisible();
   const remove = page.getByRole("button", { name: /^Remove / });
   for (let n = await remove.count(); n > 0; n--) {
+    const title = (await remove.first().getAttribute("aria-label"))!.replace(/^Remove /, "");
     await remove.first().click();
     await expect(remove).toHaveCount(n - 1);
+    await expect(notice(page)).toContainText(`Removed ${title}`);
   }
   await expectListCount(page, 0);
 }

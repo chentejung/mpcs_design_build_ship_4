@@ -3,7 +3,7 @@
 // test at a time: the tests share the user, whose current-month Entries are cleared before each one.
 import { expect, test } from "@playwright/test";
 import {
-  alreadySaved, card, clearThisMonth, errorToast, expectListCount, listRows, notice, saveButton, signIn,
+  alreadySaved, andWaitForServer, card, clearThisMonth, errorToast, expectListCount, listRows, notice, saveButton, signIn,
   skipWithoutTestUsers, undoButton, USER_A,
 } from "./signed-in";
 import { nowPlaying } from "./tmdb-fixtures";
@@ -46,7 +46,7 @@ test("Save adds the film to this month: the card turns Already saved and the tab
 test("Undo within 3 seconds takes the Save back, and the count with it", async ({ page }) => {
   await saveButton(page, first).click();
   await expectListCount(page, 1);
-  await undoButton(page).click();
+  await andWaitForServer(page, () => undoButton(page).click());
 
   await expect(saveButton(page, first)).toBeVisible();
   await expectListCount(page, 0);
@@ -96,7 +96,7 @@ test("the same film can't be saved twice in one month", async ({ page, context }
   await other.goto("/");
   await expect(saveButton(other, first)).toBeVisible();
 
-  await saveButton(page, first).click();
+  await andWaitForServer(page, () => saveButton(page, first).click());
   await expect(alreadySaved(page, first)).toBeVisible();
 
   await saveButton(other, first).click();

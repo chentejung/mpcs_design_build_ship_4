@@ -4,7 +4,7 @@
 // so this measures the policies; docs/rls-isolation-test.md records it failing under a loosened select policy.
 import { expect, test, type Browser, type Page } from "@playwright/test";
 import {
-  alreadySaved, clearThisMonth, expectListCount, listRows, saveButton, signIn, skipWithoutTestUsers, USER_A, USER_B,
+  alreadySaved, andWaitForServer, clearThisMonth, expectListCount, listRows, saveButton, signIn, skipWithoutTestUsers, USER_A, USER_B,
 } from "./signed-in";
 import { nowPlaying } from "./tmdb-fixtures";
 
@@ -24,7 +24,7 @@ async function userPage(browser: Browser, email: string) {
 
 async function save(page: Page, title: string) {
   await page.goto("/");
-  await saveButton(page, title).click();
+  await andWaitForServer(page, () => saveButton(page, title).click());
   await expect(alreadySaved(page, title)).toBeVisible();
   await expectListCount(page, 1);
 }

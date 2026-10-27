@@ -57,4 +57,8 @@ describe("the Undo toast", () => {
   it("undoing a Save takes one off the My List count", () => {
     expect(countChange({ kind: "delete-entry", entryId: "e1" })).toBe(-1);
   });
+
+  it("undoing a Remove puts one back on the My List count", () => {
+    expect(countChange({ kind: "reinsert-entry", token: "signed.copy" })).toBe(1);
+  });
 });
