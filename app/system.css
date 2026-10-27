@@ -1,0 +1,1040 @@
+/* Pulp Design System components (components/system/), carried over from Week 2. lib/pulp.ts sets its colors, fonts
+   and shapes as --ds-* variables on the [data-system="pulp"] wrapper; the Pulp rules below give it its controls,
+   frames and feel. data-state="hover" | "focus" | "pressed" freezes a state, so every state rule covers both the real
+   pseudo-class and its data-state twin. */
+
+/* Registered so a Pulp block's extrusion can grow and shrink smoothly. */
+@property --ds-depth {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 5px;
+}
+
+@layer components {
+  .ds {
+    position: relative;
+    isolation: isolate;
+    background: var(--ds-bg);
+    color: var(--ds-text);
+    font-family: var(--ds-body-font);
+    font-size: var(--ds-body-size);
+    font-weight: var(--ds-body-weight);
+  }
+
+  /* ----- Type roles ----- */
+  .ds-display {
+    font-family: var(--ds-display-font);
+    font-size: min(var(--ds-display-size), 13cqi); /* cqi = viewport width outside a container */
+    font-weight: var(--ds-display-weight);
+    letter-spacing: var(--ds-display-tracking);
+    text-transform: var(--ds-display-case);
+    line-height: 1.02;
+  }
+  .ds-heading {
+    font-family: var(--ds-heading-font);
+    font-size: min(var(--ds-heading-size), 4.6cqi + 2px);
+    font-weight: var(--ds-heading-weight);
+    letter-spacing: var(--ds-heading-tracking);
+    text-transform: var(--ds-heading-case);
+    line-height: 1.15;
+  }
+  .ds-body {
+    font-family: var(--ds-body-font);
+    font-size: var(--ds-body-size);
+    font-weight: var(--ds-body-weight);
+    letter-spacing: var(--ds-body-tracking);
+    line-height: 1.45;
+  }
+  .ds-label {
+    font-family: var(--ds-label-font);
+    font-size: var(--ds-label-size);
+    font-weight: var(--ds-label-weight);
+    letter-spacing: var(--ds-label-tracking);
+    text-transform: var(--ds-label-case);
+    line-height: 1.1;
+  }
+  .ds-meta {
+    font-family: var(--ds-meta-font);
+    font-size: var(--ds-meta-size);
+    font-weight: var(--ds-meta-weight);
+    letter-spacing: var(--ds-meta-tracking);
+    font-variant-numeric: tabular-nums;
+    line-height: 1.3;
+  }
+  .ds-native {
+    font-family: var(--ds-native-font);
+    font-size: var(--ds-native-size);
+    font-weight: var(--ds-native-weight);
+    line-height: 1.3;
+  }
+  .ds-fine {
+    font-family: var(--ds-fine-print-font);
+    font-size: var(--ds-fine-print-size);
+    font-weight: var(--ds-fine-print-weight);
+    line-height: 1.5;
+  }
+  .ds-muted {
+    color: var(--ds-muted);
+  }
+
+  /* ----- Focus: a two-tone ring (Background halo + Focus outline) that shows on any color or poster ----- */
+  .ds :is(a, button, input, select, [role="switch"]):focus-visible,
+  .ds [data-state="focus"],
+  .ds .ds-check input:focus-visible + .ds-box {
+    outline: 3px solid var(--ds-focus);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 2px var(--ds-bg), var(--ds-shadow, 0 0 #0000);
+  }
+
+  /* ----- Buttons ----- */
+  .ds-btn {
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4em;
+    padding: 0 1.1em;
+    border: var(--ds-control-border) solid var(--ds-text);
+    border-radius: var(--ds-radius-control);
+    background: var(--ds-bg);
+    color: var(--ds-text);
+    box-shadow: var(--ds-shadow, 0 0 #0000);
+    font-family: var(--ds-label-font);
+    font-size: var(--ds-label-size);
+    font-weight: var(--ds-label-weight);
+    letter-spacing: var(--ds-label-tracking);
+    text-transform: var(--ds-label-case);
+    line-height: 1;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease, filter 0.12s ease;
+  }
+  .ds-btn--block {
+    width: 100%;
+  }
+  .ds-btn--primary,
+  .ds-btn[aria-pressed="true"] {
+    background: var(--ds-accent);
+    color: var(--ds-on-accent);
+  }
+  .ds-btn[aria-current="page"] {
+    background: var(--ds-text);
+    color: var(--ds-bg);
+  }
+  .ds-btn:disabled,
+  .ds-chip:disabled,
+  .ds-input:disabled,
+  .ds-select:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  /* ----- Filter chips ----- */
+  .ds-chip {
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    min-height: 44px;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 0.5em;
+    padding: 0 1em;
+    border: var(--ds-control-border) solid var(--ds-text);
+    border-radius: var(--ds-radius-control);
+    background: var(--ds-bg);
+    color: var(--ds-text);
+    box-shadow: var(--ds-shadow, 0 0 #0000);
+    font-family: var(--ds-label-font);
+    font-size: var(--ds-label-size);
+    font-weight: var(--ds-label-weight);
+    letter-spacing: var(--ds-label-tracking);
+    text-transform: var(--ds-label-case);
+    cursor: pointer;
+    transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+  }
+  .ds-chip[aria-pressed="true"] {
+    background: var(--ds-selected);
+    color: var(--ds-on-selected);
+  }
+  .ds-chip-count {
+    font-family: var(--ds-meta-font);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0;
+    opacity: 0.75;
+  }
+  .ds-chip[aria-pressed="true"] .ds-chip-count {
+    opacity: 1;
+  }
+
+  /* The filter chips wrap onto as many lines as they need, on phones as on desktop, so every one is in view. */
+  .ds-chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 6px 0 10px;
+  }
+
+  /* ----- Links, inputs, select, checkbox, radio, toggle, tabs ----- */
+  .ds-link {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-decoration-color: var(--ds-border);
+    text-underline-offset: 4px;
+  }
+  .ds-link:hover,
+  .ds-link[data-state="hover"] {
+    text-decoration-color: var(--ds-accent);
+  }
+  .ds-input,
+  .ds-select {
+    width: 100%;
+    min-height: 44px;
+    padding: 0 0.9em;
+    border: var(--ds-control-border) solid var(--ds-text);
+    border-radius: var(--ds-radius-control);
+    background: var(--ds-bg);
+    color: var(--ds-text);
+    font-family: var(--ds-body-font);
+    font-size: var(--ds-body-size);
+  }
+  .ds-input::placeholder {
+    color: var(--ds-muted);
+  }
+  .ds-select {
+    appearance: none;
+    padding-right: 2.4em;
+  }
+  .ds-select-wrap {
+    position: relative;
+    display: block;
+  }
+  .ds-select-wrap::after {
+    content: "▾";
+    position: absolute;
+    top: 50%;
+    right: 0.9em;
+    transform: translateY(-50%);
+    pointer-events: none;
+  }
+  .ds-check {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 0.6em;
+    cursor: pointer;
+  }
+  .ds-check input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+  }
+  .ds-box {
+    display: inline-grid;
+    width: 22px;
+    height: 22px;
+    flex-shrink: 0;
+    place-items: center;
+    border: var(--ds-control-border) solid var(--ds-text);
+    border-radius: min(var(--ds-radius-control), 6px);
+    background: var(--ds-bg);
+    color: var(--ds-on-selected);
+    font-size: 14px;
+    line-height: 1;
+  }
+  .ds-check input[type="radio"] + .ds-box {
+    border-radius: 50%;
+  }
+  .ds-check input:checked + .ds-box {
+    border-color: var(--ds-selected);
+    background: var(--ds-selected);
+  }
+  .ds-box svg {
+    opacity: 0;
+  }
+  .ds-check input:checked + .ds-box svg {
+    opacity: 1;
+  }
+  .ds-check input[type="radio"]:checked + .ds-box {
+    box-shadow: inset 0 0 0 4px var(--ds-bg);
+  }
+  .ds-toggle {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    gap: 0.7em;
+    cursor: pointer;
+  }
+  .ds-toggle-track {
+    position: relative;
+    width: 46px;
+    height: 26px;
+    flex-shrink: 0;
+    border: var(--ds-control-border) solid var(--ds-text);
+    border-radius: 999px;
+    background: var(--ds-bg);
+    transition: background-color 0.15s ease;
+  }
+  .ds-toggle-track::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--ds-text);
+    transform: translateY(-50%);
+    transition: left 0.15s ease, background-color 0.15s ease;
+  }
+  .ds-toggle[aria-checked="true"] .ds-toggle-track {
+    border-color: var(--ds-selected);
+    background: var(--ds-selected);
+  }
+  .ds-toggle[aria-checked="true"] .ds-toggle-track::after {
+    left: calc(100% - 19px);
+    background: var(--ds-on-selected);
+  }
+  .ds-tabs {
+    display: flex;
+    gap: 4px;
+    border-bottom: var(--ds-control-border) solid var(--ds-border);
+  }
+  .ds-tab {
+    min-height: 44px;
+    padding: 0 1em;
+    border-bottom: 4px solid transparent;
+    margin-bottom: calc(-1 * var(--ds-control-border));
+    font-family: var(--ds-label-font);
+    font-size: var(--ds-label-size);
+    font-weight: var(--ds-label-weight);
+    letter-spacing: var(--ds-label-tracking);
+    text-transform: var(--ds-label-case);
+    cursor: pointer;
+  }
+  .ds-tab[aria-selected="true"] {
+    border-bottom-color: var(--ds-selected);
+  }
+
+  /* ----- Badges, counts, panels, rows, toast, status, empty state ----- */
+  .ds-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3em 0.65em;
+    border-radius: var(--ds-radius-badge);
+    background: var(--cat-bg);
+    color: var(--cat-fg);
+    font-family: var(--ds-label-font);
+    font-size: calc(var(--ds-label-size) * 0.85);
+    font-weight: var(--ds-label-weight);
+    letter-spacing: var(--ds-label-tracking);
+    text-transform: var(--ds-label-case);
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+  .ds-count {
+    display: inline-grid;
+    min-width: 1.75em;
+    height: 1.75em;
+    place-items: center;
+    padding: 0 0.3em;
+    border-radius: var(--ds-radius-badge);
+    background: var(--ds-accent);
+    color: var(--ds-on-accent);
+    font-family: var(--ds-meta-font);
+    font-size: 12px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+  .ds-panel {
+    border-radius: var(--ds-radius-panel);
+    background: var(--ds-surface);
+    color: var(--ds-on-surface);
+    padding: 20px;
+  }
+  .ds-panel .ds-muted {
+    color: var(--ds-muted-on-surface);
+  }
+  .ds-row {
+    display: grid;
+    min-height: 72px;
+    grid-template-columns: 44px 1fr auto;
+    align-items: center;
+    gap: 14px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--ds-border);
+  }
+  .ds-toast {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 16px;
+    border-radius: var(--ds-radius-control);
+    background: var(--ds-text);
+    color: var(--ds-bg);
+  }
+  .ds-toast .ds-link {
+    text-decoration-color: currentColor;
+  }
+  .ds-rule {
+    border-top: 2px solid var(--ds-border);
+  }
+  .ds-empty {
+    display: grid;
+    justify-items: center;
+    gap: 6px;
+    padding: 56px clamp(12px, 5cqi, 24px);
+    border: var(--ds-control-border) dashed var(--ds-border);
+    border-radius: var(--ds-radius-panel);
+    text-align: center;
+  }
+
+  /* Poster credits: two columns from 640px, three from 1024px. */
+  .ds-credits-list {
+    column-gap: 40px;
+  }
+  @media (min-width: 640px) {
+    .ds-credits-list {
+      columns: 2;
+    }
+  }
+  @media (min-width: 1024px) {
+    .ds-credits-list {
+      columns: 3;
+    }
+  }
+
+  /* A headline's gloss, tracked wide. */
+  .ds-kicker {
+    font-family: var(--ds-body-font);
+    font-size: calc(var(--ds-body-size) + 2px);
+    font-weight: 700;
+    letter-spacing: 0.5em;
+    line-height: 1.4;
+  }
+
+  /* ----- Film card and poster frame ----- */
+  .ds-card {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+  }
+  .ds-frame {
+    position: relative;
+  }
+  .ds-poster {
+    position: relative;
+    box-sizing: content-box; /* the 2:3 is the picture's, inside any keyline a system draws */
+    aspect-ratio: 2 / 3;
+    overflow: hidden;
+    border-radius: var(--ds-radius-poster);
+    background: var(--ds-surface);
+  }
+  .ds-poster img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.25s ease;
+  }
+  .ds-poster[data-poster="error"] img {
+    opacity: 0;
+  }
+  .ds-poster[data-poster="loading"] .ds-poster-fallback {
+    animation: ds-pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes ds-pulse {
+    50% {
+      opacity: 0.45;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ds *,
+    .ds *::before,
+    .ds *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+  .ds-poster-fallback {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    align-content: center;
+    gap: 6px;
+    padding: 14px;
+    color: var(--ds-on-surface);
+    text-align: center;
+  }
+  .ds-card:hover .ds-poster img,
+  .ds-card[data-state="hover"] .ds-poster img {
+    transform: scale(1.04);
+  }
+  .ds-category {
+    position: absolute;
+    z-index: 2;
+    box-shadow: 0 0 0 3px var(--ds-scrim); /* the Scrim backs the badge on poster art */
+  }
+  .ds-card-title {
+    margin-top: 12px;
+  }
+  .ds-card-native {
+    margin-top: 2px;
+  }
+  .ds-card-meta {
+    margin-top: 4px;
+    color: var(--ds-muted);
+  }
+  .ds-card-synopsis {
+    margin: 6px 0 14px;
+    color: var(--ds-muted);
+  }
+  .ds-card-action {
+    margin-top: auto;
+  }
+
+  /* ----- Site header ----- */
+  .ds-header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--ds-scrim);
+    backdrop-filter: blur(6px);
+  }
+  .ds-brand-mark {
+    display: grid;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    place-items: center;
+  }
+
+  /* ----- Page footer ----- */
+  .ds-footer {
+    margin-top: 40px;
+    border-top: 2px solid var(--ds-border);
+  }
+
+  /* ----- Icons in buttons, and the stamp a saved film gets on its poster ----- */
+  .ds-btn-icon {
+    display: inline-grid;
+    flex-shrink: 0;
+    place-items: center;
+    font-size: 1.3em;
+    line-height: 1;
+  }
+  .ds-saved-stamp {
+    position: absolute;
+    z-index: 3;
+    display: none;
+    place-items: center;
+    pointer-events: none;
+    line-height: 1;
+  }
+  .ds-card:has(.ds-btn[aria-pressed="true"]) .ds-saved-stamp {
+    display: grid;
+    animation: ds-stamp 0.3s cubic-bezier(0.3, 1.5, 0.5, 1) both;
+  }
+  @keyframes ds-stamp {
+    from {
+      opacity: 0;
+      scale: 1.9;
+    }
+  }
+
+  /* ===================================================================================================
+     Pulp: after the newsstand covers, one-sheets and pop-art panels on Mood Board 02 (components/system/pulp/): Space
+     Fleet (26), Captain Aero (25), Weird Space Tales (03), Into the Unknown (29), The Mask (08), American Psycho (20),
+     Pow! (16), Look! (17), Ring! Ring! (13) and Krakoom! (05). Everything stands on a 3D extrusion, as the masthead
+     letters do: a block --ds-depth deep toward the lower right with bevelled corners, drawn on ::before (Ink, or Hero
+     Red under the issue box) with the face on ::after, so the element itself keeps its focus ring. Buttons are masthead
+     blocks; secondary buttons are the cover's corner issue box, ruled double; chips are the Bijou's marquee boards,
+     their bulbs chasing on hover and lit when selected. Hover raises a block off its extrusion; press punches it flat.
+     =================================================================================================== */
+  [data-system="pulp"] {
+    --ds-block: 1px 1px 0 var(--ds-text), 2px 2px 0 var(--ds-text), 3px 3px 0 var(--ds-text), 4px 4px 0 var(--ds-text), 5px 5px 0 var(--ds-text), 6px 6px 0 var(--ds-text);
+    --ds-block-red: 1px 1px 0 var(--ds-accent), 2px 2px 0 var(--ds-accent), 3px 3px 0 var(--ds-accent), 4px 4px 0 var(--ds-accent), 5px 5px 0 var(--ds-text);
+    --ds-bulb-off: color-mix(in srgb, var(--ds-swatch-sepia) 42%, transparent);
+    --ds-bulb-on: var(--ds-swatch-mustard);
+    --ds-bulb-hot: color-mix(in srgb, var(--ds-swatch-mustard) 45%, #fff);
+    --ds-pulp-flecks: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='%23f2eddd' opacity='.42'%3E%3Cpath d='M8 12h3v1H8zM31 43h5v.8h-5zM96 17h2v2h-2zM72 79h4v1h-4zM118 116h5v.7h-5zM15 106h2v1h-2zM57 126h3v1h-3zM123 53h4v1h-4zM43 14h1v3h-1zM87 109h1v4h-1z'/%3E%3C/g%3E%3Cg fill='%235b4b3c' opacity='.2'%3E%3Cpath d='M14 32h2v1h-2zM64 52h3v1h-3zM107 85h4v1h-4zM28 119h3v1h-3zM87 34h2v1h-2zM47 93h1v3h-1z'/%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* Masthead type: Hero Red letters extruded in Ink, as THE BIJOU stands on the cover. */
+  [data-system="pulp"] .ds-display {
+    color: var(--ds-accent);
+    text-shadow: 0.015em 0.015em 0 var(--ds-text), 0.03em 0.03em 0 var(--ds-text), 0.045em 0.045em 0 var(--ds-text), 0.06em 0.06em 0 var(--ds-text);
+    line-height: 1.1;
+  }
+  /* The headline's blurb: a Mustard caption box, knocked askew, on a Hero Red block. */
+  [data-system="pulp"] .ds-kicker {
+    display: inline-block;
+    max-width: 100%;
+    padding: 0.4em 0.8em 0.35em;
+    border: 3px solid var(--ds-text);
+    background: var(--ds-swatch-mustard);
+    color: var(--ds-text);
+    font-family: var(--ds-label-font);
+    font-size: 17px;
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    rotate: -1.5deg;
+    box-shadow: var(--ds-block-red);
+  }
+
+  /* ----- Masthead blocks and marquee boards ----- */
+  [data-system="pulp"] :is(.ds-btn, .ds-chip) {
+    --ds-depth: 5px;
+    --face: var(--ds-bg);
+    --side: var(--ds-text);
+    --rule: transparent;
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+    transition: translate 0.12s ease, --ds-depth 0.12s ease;
+  }
+  /* The extrusion: a block one depth deep toward the lower right, its corners bevelled, its far edges keylined. */
+  [data-system="pulp"] :is(.ds-btn, .ds-chip)::before {
+    content: "";
+    position: absolute;
+    inset: calc(-1 * var(--ds-control-border)) calc(-1 * var(--ds-control-border) - var(--ds-depth)) calc(-1 * var(--ds-control-border) - var(--ds-depth)) calc(-1 * var(--ds-control-border));
+    z-index: -1;
+    background: repeating-linear-gradient(135deg, #0000 0 3px, #f2eddd55 3px 3.7px, #0000 3.7px 6px), var(--side);
+    clip-path: polygon(0 0, calc(100% - var(--ds-depth)) 0, 100% var(--ds-depth), 100% 100%, var(--ds-depth) 100%, 0 calc(100% - var(--ds-depth)));
+    pointer-events: none;
+  }
+  /* The face, keylined in Ink; the issue box rules it a second time inside. */
+  [data-system="pulp"] :is(.ds-btn, .ds-chip)::after {
+    content: "";
+    position: absolute;
+    inset: calc(-1 * var(--ds-control-border));
+    z-index: -1;
+    border: var(--ds-control-border) solid var(--ds-text);
+    background: var(--ds-pulp-flecks), radial-gradient(ellipse at 100% 100%, #0d0c0d20, #0000 70%), var(--face);
+    box-shadow: inset 0 0 0 2px var(--face), inset 0 0 0 3.5px var(--rule);
+    pointer-events: none;
+  }
+  [data-system="pulp"] :is(.ds-btn--primary, .ds-btn[aria-pressed="true"]) {
+    --face: var(--ds-accent);
+    background: transparent;
+    color: var(--ds-on-accent);
+  }
+  [data-system="pulp"] .ds-btn--secondary {
+    --side: var(--ds-accent);
+    --rule: var(--ds-text);
+  }
+  [data-system="pulp"] .ds-btn[aria-current="page"] {
+    --face: var(--ds-selected);
+    --side: var(--ds-accent);
+    --rule: color-mix(in srgb, var(--ds-on-selected) 70%, transparent);
+    background: transparent;
+    color: var(--ds-on-selected);
+  }
+  [data-system="pulp"] .ds-btn-icon {
+    font-size: 1.4em;
+    transition: rotate 0.2s cubic-bezier(0.3, 1.6, 0.5, 1);
+  }
+  /* Hover raises the block off its extrusion; press punches it flat into it. */
+  [data-system="pulp"] :is(.ds-btn, .ds-chip):is(:hover:not(:disabled), [data-state="hover"]) {
+    --ds-depth: 7px;
+    translate: -2px -2px;
+  }
+  [data-system="pulp"] :is(.ds-btn, .ds-chip):is(:hover:not(:disabled), [data-state="hover"]) .ds-btn-icon {
+    rotate: -12deg;
+  }
+  [data-system="pulp"] :is(.ds-btn, .ds-chip):is(:active:not(:disabled), [data-state="pressed"]) {
+    --ds-depth: 1px;
+    translate: 4px 4px;
+  }
+
+  /* Chips: marquee boards. The Category's pop-art panel heads the board, with a string of bulbs along its top and
+     foot; they chase on hover, light up Mustard on an Ink board when selected, and flash when pressed. */
+  [data-system="pulp"] .ds-chip {
+    --ds-depth: 4px;
+    --bulb: var(--ds-bulb-off);
+    --bulb-alt: var(--ds-bulb-off);
+    min-height: 46px;
+    gap: 0.5em;
+    padding: 0 0.95em 0 8px;
+  }
+  [data-system="pulp"] .ds-chip::after {
+    background:
+      radial-gradient(circle, var(--bulb) 0 1.6px, #0000 2.1px) 0 1px / 16px 6px repeat-x,
+      radial-gradient(circle, var(--bulb-alt) 0 1.6px, #0000 2.1px) 8px 1px / 16px 6px repeat-x,
+      radial-gradient(circle, var(--bulb-alt) 0 1.6px, #0000 2.1px) 0 calc(100% - 1px) / 16px 6px repeat-x,
+      radial-gradient(circle, var(--bulb) 0 1.6px, #0000 2.1px) 8px calc(100% - 1px) / 16px 6px repeat-x,
+      var(--ds-pulp-flecks),
+      var(--face);
+    box-shadow: none;
+  }
+  [data-system="pulp"] .ds-chip[aria-pressed="true"] {
+    --face: var(--ds-selected);
+    --bulb: var(--ds-bulb-on);
+    --bulb-alt: var(--ds-bulb-hot);
+    color: var(--ds-on-selected);
+  }
+  [data-system="pulp"] .ds-chip:is(:hover:not(:disabled), [data-state="hover"])::after {
+    animation: ds-chase 0.7s steps(2) infinite;
+  }
+  [data-system="pulp"] .ds-chip:is(:hover:not(:disabled), [data-state="hover"]):not([aria-pressed="true"]) {
+    --bulb: var(--ds-accent);
+  }
+  [data-system="pulp"] .ds-chip:is(:active:not(:disabled), [data-state="pressed"]) {
+    --bulb: #fff;
+    --bulb-alt: var(--ds-bulb-on);
+  }
+  @keyframes ds-chase {
+    to {
+      background-position: 16px 1px, 24px 1px, 16px calc(100% - 1px), 24px calc(100% - 1px), 0 0;
+    }
+  }
+  [data-system="pulp"] .ds-genre-icon {
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+  }
+
+  /* ----- The count: the cover's issue number, No. 3, slapped on askew; a new count lands with a pop ----- */
+  [data-system="pulp"] .ds-count {
+    display: inline-flex;
+    min-width: 0;
+    height: auto;
+    align-items: baseline;
+    gap: 1px;
+    padding: 3px 5px 2px;
+    border: 2px solid var(--ds-text);
+    border-radius: 0;
+    background: var(--ds-swatch-mustard);
+    color: var(--ds-text);
+    font-family: var(--ds-label-font);
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1;
+    rotate: -4deg;
+    animation: ds-pop 0.35s cubic-bezier(0.3, 1.6, 0.5, 1);
+  }
+  [data-system="pulp"] .ds-count::before {
+    content: "No.";
+    font-family: var(--ds-meta-font);
+    font-size: 8px;
+    font-weight: 700;
+  }
+  @keyframes ds-pop {
+    from {
+      rotate: 14deg;
+      scale: 1.8;
+    }
+  }
+
+  /* ----- Inputs and choices ----- */
+  [data-system="pulp"] :is(.ds-input, .ds-select) {
+    --ds-shadow: 1px 1px 0 var(--ds-text), 2px 2px 0 var(--ds-text), 3px 3px 0 var(--ds-text), 4px 4px 0 var(--ds-text);
+    box-shadow: var(--ds-shadow);
+    transition: border-color 0.15s ease;
+  }
+  [data-system="pulp"] :is(.ds-input, .ds-select):is(:hover:not(:disabled), [data-state="hover"]) {
+    border-color: var(--ds-accent);
+  }
+  /* The select points down from an Ink tile, in Mustard. */
+  [data-system="pulp"] .ds-select-wrap::after {
+    content: "";
+    right: 10px;
+    width: 24px;
+    height: 24px;
+    background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 3.5h8L6 9z' fill='%23d3bc2c'/%3E%3C/svg%3E") center / 12px no-repeat,
+      var(--ds-text);
+  }
+  [data-system="pulp"] .ds-box {
+    border-radius: 0;
+    box-shadow: 2px 2px 0 var(--ds-text);
+  }
+  /* Radios are ringed planets: choosing one turns it Mustard and swings a Hero Red ring round it. */
+  [data-system="pulp"] .ds-check input[type="radio"] + .ds-box {
+    position: relative;
+    border-radius: 50%;
+    box-shadow: none;
+  }
+  [data-system="pulp"] .ds-check input[type="radio"] + .ds-box::after {
+    content: "";
+    position: absolute;
+    width: 34px;
+    height: 11px;
+    border: 2.5px solid var(--ds-accent);
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px var(--ds-text), inset 0 0 0 1px var(--ds-text);
+    opacity: 0;
+    rotate: -20deg;
+    scale: 0.4;
+    transition: opacity 0.15s ease, scale 0.25s cubic-bezier(0.3, 1.5, 0.5, 1);
+  }
+  [data-system="pulp"] .ds-check input[type="radio"]:checked + .ds-box {
+    border-color: var(--ds-text);
+    background: var(--ds-swatch-mustard);
+    box-shadow: inset -4px -3px 0 color-mix(in srgb, var(--ds-swatch-sepia) 45%, transparent);
+  }
+  [data-system="pulp"] .ds-check input[type="radio"]:checked + .ds-box::after {
+    opacity: 1;
+    scale: 1;
+  }
+  /* Toggle and tabs light up like the marquee: Mustard bulbs on an Ink board. */
+  [data-system="pulp"] .ds-toggle-track {
+    border-radius: 0;
+    border-width: 3px;
+    box-shadow: 2px 2px 0 var(--ds-text);
+  }
+  [data-system="pulp"] .ds-toggle-track::after {
+    border-radius: 0;
+  }
+  [data-system="pulp"] .ds-toggle[aria-checked="true"] .ds-toggle-track {
+    border-color: var(--ds-text);
+    background: radial-gradient(circle, var(--ds-bulb-off) 0 1.4px, #0000 1.9px) 1px 50% / 6px 6px repeat-x, var(--ds-text);
+  }
+  [data-system="pulp"] .ds-toggle[aria-checked="true"] .ds-toggle-track::after {
+    background: var(--ds-swatch-mustard);
+    box-shadow: 0 0 0 2px var(--ds-text), 0 0 6px 1px var(--ds-bulb-hot);
+  }
+  [data-system="pulp"] .ds-tabs {
+    gap: 6px;
+    border-bottom: 3px solid var(--ds-text);
+  }
+  [data-system="pulp"] .ds-tab {
+    margin-bottom: 0;
+    border-bottom: 0;
+  }
+  [data-system="pulp"] .ds-tab[aria-selected="true"] {
+    background: radial-gradient(circle, var(--ds-bulb-on) 0 1.5px, #0000 2px) 0 2px / 8px 6px repeat-x, var(--ds-selected);
+    color: var(--ds-on-selected);
+  }
+
+  /* ----- Badges: slanted cover ribbons with the Category's panel; on a poster, hung off its left edge ----- */
+  [data-system="pulp"] .ds-badge {
+    position: relative;
+    isolation: isolate;
+    gap: 0.4em;
+    padding: 2px 0.75em 2px 3px;
+    background: transparent;
+    font-size: 12px;
+  }
+  [data-system="pulp"] .ds-badge::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border: 2px solid var(--ds-text);
+    background: var(--cat-bg);
+    box-shadow: 1px 1px 0 var(--ds-text), 2px 2px 0 var(--ds-text), 3px 3px 0 var(--ds-text);
+    transform: skewX(-12deg);
+  }
+  [data-system="pulp"] .ds-badge:not(:has(.ds-genre-icon)) {
+    padding-left: 0.75em;
+  }
+  [data-system="pulp"] .ds-badge .ds-genre-icon {
+    width: 18px;
+    height: 18px;
+  }
+  [data-system="pulp"] .ds-category {
+    position: absolute;
+    top: 10px;
+    left: -7px;
+    rotate: -3deg;
+    box-shadow: none;
+  }
+
+  /* ----- Poster frame: keylined in Ink on a bevelled Ink block; hover lifts the poster off it ----- */
+  [data-system="pulp"] .ds-frame {
+    --ds-depth: 6px;
+    isolation: isolate;
+    transition: translate 0.15s ease, --ds-depth 0.15s ease;
+  }
+  [data-system="pulp"] .ds-frame::before {
+    content: "";
+    position: absolute;
+    inset: 0 calc(-1 * var(--ds-depth)) calc(-1 * var(--ds-depth)) 0;
+    z-index: -1;
+    background: var(--ds-text);
+    clip-path: polygon(0 0, calc(100% - var(--ds-depth)) 0, 100% var(--ds-depth), 100% 100%, var(--ds-depth) 100%, 0 calc(100% - var(--ds-depth)));
+    pointer-events: none;
+  }
+  [data-system="pulp"] .ds-poster {
+    border: 3px solid var(--ds-text);
+  }
+  /* An aged one-sheet printed on stock: finish only, retaining the original poster and frame dimensions. */
+  [data-system="pulp"] .ds-poster img {
+    filter: sepia(0.24) saturate(0.85) contrast(1.08);
+  }
+  [data-system="pulp"] .ds-poster[data-poster="loaded"]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background:
+      var(--ds-pulp-flecks),
+      linear-gradient(91deg, #5b4b3c30, #0000 8% 92%, #5b4b3c40),
+      radial-gradient(circle, #0d0c0d35 0 0.45px, #0000 0.7px) 0 0 / 3px 3px;
+    box-shadow: inset 0 0 0 4px #f2edddbb, inset 0 0 15px #5b4b3c50;
+    mix-blend-mode: multiply;
+  }
+  [data-system="pulp"] :is(.ds-card:hover, .ds-card[data-state="hover"]) .ds-frame {
+    --ds-depth: 10px;
+    translate: -3px -3px;
+  }
+  [data-system="pulp"] .ds-card-title {
+    margin-top: 16px;
+  }
+  /* Saved: a HELD OVER! snipe pasted across the poster's corner, as cinemas paste one on a film kept another week. */
+  [data-system="pulp"] .ds-saved-stamp {
+    top: 3px;
+    right: 3px;
+    width: 96px;
+    height: 96px;
+    overflow: hidden;
+  }
+  [data-system="pulp"] .ds-saved-stamp::before {
+    content: "HELD OVER!";
+    position: absolute;
+    top: 21px;
+    right: -40px;
+    width: 152px;
+    padding: 4px 0 3px;
+    border-block: 2px solid var(--ds-text);
+    background: var(--ds-swatch-mustard);
+    color: var(--ds-text);
+    font-family: var(--ds-label-font);
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-align: center;
+    rotate: 45deg;
+  }
+
+  /* ----- Header: the Bijou's marquee, an Ink board with its bulbs strung along a Hero Red foot ----- */
+  [data-system="pulp"] .ds-header {
+    padding-bottom: 14px;
+    background: var(--ds-text);
+    color: var(--ds-bg);
+    backdrop-filter: none;
+  }
+  [data-system="pulp"] .ds-header::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 14px;
+    z-index: -1;
+    background:
+      radial-gradient(circle, var(--ds-bulb-on) 0 2.2px, #0000 2.8px) 0 50% / 28px 14px repeat-x,
+      radial-gradient(circle, var(--ds-bulb-hot) 0 2.2px, #0000 2.8px) 14px 50% / 28px 14px repeat-x,
+      linear-gradient(var(--ds-text) 0 2px, var(--ds-accent) 2px calc(100% - 2px), var(--ds-text) calc(100% - 2px));
+    animation: ds-marquee 1.6s steps(2) infinite;
+    pointer-events: none;
+  }
+  @keyframes ds-marquee {
+    to {
+      background-position: 28px 50%, 42px 50%, 0 0;
+    }
+  }
+  [data-system="pulp"] .ds-brand-name {
+    color: var(--ds-swatch-mustard);
+    font-family: var(--ds-display-font);
+    letter-spacing: 0.01em;
+    text-shadow: 1px 1px 0 var(--ds-accent), 2px 2px 0 var(--ds-accent), 3px 3px 0 var(--ds-accent);
+  }
+  [data-system="pulp"] .ds-brand-mark {
+    width: 44px;
+    height: 44px;
+  }
+  [data-system="pulp"] .ds-header .ds-btn[aria-current="page"] {
+    --face: var(--ds-swatch-mustard);
+    --rule: var(--ds-text);
+    color: var(--ds-text);
+  }
+  /* On the Ink board, focus rings print Mustard with an Ink halo. */
+  [data-system="pulp"] .ds-header :is(a, button):focus-visible {
+    outline-color: var(--ds-swatch-mustard);
+    box-shadow: 0 0 0 2px var(--ds-text);
+  }
+
+  /* ----- Rules, panels, rows, toast, empty state, cover, billing block, THE END ----- */
+  [data-system="pulp"] .ds-rule {
+    border-top: 0;
+    background: linear-gradient(var(--ds-text) 0 4px, #0000 4px 7px, var(--ds-accent) 7px 10px) 0 0 / 100% 10px no-repeat;
+  }
+  [data-system="pulp"] .ds-panel {
+    border: 3px solid var(--ds-text);
+    box-shadow: var(--ds-block);
+  }
+  [data-system="pulp"] .ds-row {
+    border-bottom: 2px solid var(--ds-border);
+  }
+  [data-system="pulp"] .ds-row .ds-poster {
+    border-width: 2px;
+  }
+  /* The toast is a narration caption: Mustard, keylined, on its block. */
+  [data-system="pulp"] .ds-toast {
+    border: 3px solid var(--ds-text);
+    border-radius: 0;
+    background: var(--ds-swatch-mustard);
+    color: var(--ds-text);
+    box-shadow: var(--ds-block);
+  }
+  [data-system="pulp"] .ds-empty {
+    padding-top: 24px;
+    border: 0;
+  }
+  [data-system="pulp"] .ds-cover {
+    box-shadow: var(--ds-block);
+  }
+  /* The credits are set as a one-sheet's billing block: one centred run of condensed capitals. */
+  [data-system="pulp"] .ds-credits {
+    text-align: center;
+  }
+  [data-system="pulp"] .ds-credits > p {
+    margin-inline: auto;
+  }
+  [data-system="pulp"] .ds-credits-list {
+    max-width: 1040px;
+    margin-inline: auto;
+    columns: auto;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    line-height: 1.75;
+    text-transform: uppercase;
+  }
+  [data-system="pulp"] .ds-credits-list li {
+    display: inline;
+    padding: 0;
+  }
+  [data-system="pulp"] .ds-credits-list li + li::before {
+    content: "★";
+    margin: 0 0.7em;
+    color: var(--ds-accent);
+  }
+  /* The drawing's own proportions (1200 × 160) across the page, on Ink, so the night runs on past its ends. */
+  [data-system="pulp"] .ds-sign-off {
+    height: min(100vw * 160 / 1200, 240px);
+    margin-top: 64px;
+    border-block: 4px solid var(--ds-text);
+    background: var(--ds-text);
+  }
+  [data-system="pulp"] .ds-sign-off + .ds-footer {
+    margin-top: 0;
+    border-top: 0;
+  }
+
+}
+
+@media (max-width: 639px) {
+  [data-system="pulp"] .bijou-mobile-hide {
+    display: none;
+  }
+}
