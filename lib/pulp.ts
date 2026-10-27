@@ -145,7 +145,7 @@ export function resolveColors(s: DesignSystem): ResolvedColors {
     onSelected: hex(c.onSelected),
     focus: hex(c.focus),
     scrim: background,
-    error: text,
+    error: mix(hex(c.accent), text, 0.8), // Accent deepened with Text, to read as small bold type
     onSurface,
     mutedOnSurface: c.mutedOnSurface ? mix(onSurface, surface, c.mutedOnSurface) : muted,
   };
@@ -177,6 +177,7 @@ export function contrastChecks(s: DesignSystem): ContrastCheck[] {
     { pair: "Accent as large text on Background", ratio: contrast(r.accent, r.background), min: 3 },
     { pair: "Selected against Background", ratio: contrast(r.selected, r.background), min: 3 },
     { pair: "Focus ring against Background", ratio: contrast(r.focus, r.background), min: 3 },
+    { pair: "Error on Background", ratio: contrast(r.error, r.background), min: 4.5 },
   ];
   for (const category of Object.keys(s.colors.categories) as Category[]) {
     const { bg, fg } = categoryColors(s, category);

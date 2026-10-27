@@ -5,7 +5,7 @@ import { clerk, setupClerkTestingToken } from "@clerk/testing/playwright";
 import { expect, test, type Page } from "@playwright/test";
 import {
   alreadySaved, clearThisMonth, expectListCount, listRows, notice, saveButton, signIn, skipWithoutTestUsers, undoButton,
-  USER_A, saveFromBrowse, visit,
+  USER_A, saveFromBrowse, visit, deleteClerkUser,
 } from "./signed-in";
 import { nowPlaying } from "./tmdb-fixtures";
 
@@ -130,10 +130,3 @@ test("signing up through that modal saves the film once onboarding is done", asy
     await deleteClerkUser(email);
   }
 });
-
-async function deleteClerkUser(email: string) {
-  const headers = { Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}` };
-  const found = await fetch(`https://api.clerk.com/v1/users?email_address=${encodeURIComponent(email)}`, { headers });
-  for (const user of (await found.json()) as { id: string }[])
-    await fetch(`https://api.clerk.com/v1/users/${user.id}`, { method: "DELETE", headers });
-}

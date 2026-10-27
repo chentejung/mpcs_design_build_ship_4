@@ -1,7 +1,7 @@
 // Helpers for the signed-in specs (*.signed-in.spec.ts and signed-in.spec.ts): sign in as a test user, clear their
 // current-month Entries through the app's own Remove (AGENTS.md → Testing), and find the controls a user would.
 import { clerk, setupClerkTestingToken } from "@clerk/testing/playwright";
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Locator, type Page } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "../../lib/database.types";
 
@@ -118,4 +118,25 @@ export async function clearThisMonth(page: Page) {
     await expect(notice(page)).toContainText(`Removed ${title}`);
   }
   await expectListCount(page, 0);
+}
+
+// A field's rule, shown under it (for the genres, under the last of their chips) in bold red once it is left empty.
+export async function expectWarningUnder(field: Locator, warning: Locator) {
+  await expect(warning).toBeVisible();
+  // Both measured at once: the page may still be smooth-scrolling after the last key press.
+  const [fieldBottom, warningTop] = await Promise.all([field.elementHandle(), warning.elementHandle()]).then(([f, w]) =>
+    f!.evaluate((el, other) => [el.getBoundingClientRect().bottom, other.getBoundingClientRect().top], w!));
+  expect(warningTop, "the warning sits under its field").toBeGreaterThanOrEqual(fieldBottom - 1);
+  const { weight, color } = await warning.evaluate((el) => ({ weight: Number(getComputedStyle(el).fontWeight), color: getComputedStyle(el).color }));
+  expect(weight, "bold").toBeGreaterThanOrEqual(700);
+  const [r, g, b] = color.match(/\d+/g)!.map(Number);
+  expect(r > 150 && g < 90 && b < 90, `red, not ${color}`).toBe(true);
+}
+
+// Deletes a throwaway account a test signed up, through Clerk's Backend API (its Entries must be removed first).
+export async function deleteClerkUser(email: string) {
+  const headers = { Authorization: `Bearer ${process.env.CLERK_SECRET_KEY}` };
+  const found = await fetch(`https://api.clerk.com/v1/users?email_address=${encodeURIComponent(email)}`, { headers });
+  for (const user of (await found.json()) as { id: string }[])
+    await fetch(`https://api.clerk.com/v1/users/${user.id}`, { method: "DELETE", headers });
 }

@@ -19,7 +19,7 @@ async function Onboarding({ searchParams }: { searchParams: Promise<SearchParams
   return <section className="bijou-preferences">
     <p className="ds-label">Your first visit · Two quick questions</p>
     <h1 className="ds-display mt-3">Make yourself at home.</h1>
-    <p className="ds-body mt-4">Tell us your name and favorite genres to finish setting up your account.</p>
+    <p className="bijou-onboarding-intro mt-4">Tell us your name and favorite genres to finish setting up your account.</p>
     <PreferenceForm genres={genres} save={save} />
   </section>;
 }
