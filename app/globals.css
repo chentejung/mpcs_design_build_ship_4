@@ -1,0 +1,10 @@
+@import "tailwindcss";
+@import "./system.css";
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply antialiased;
+}

@@ -4,3 +4,19 @@
 
 # the Week 2 source archive
 *.zip
+
+# dependencies and build output
+/node_modules
+/.next/
+/out/
+next-env.d.ts
+*.tsbuildinfo
+
+# test output
+/test-results/
+/playwright-report/
+/coverage
+
+# misc
+.DS_Store
+.vercel
