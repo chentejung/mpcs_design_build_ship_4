@@ -6,6 +6,7 @@ import { Credits } from "@/components/bijou/credits";
 import { SiteNav } from "@/components/bijou/site-nav";
 import { SiteTabsPending } from "@/components/bijou/site-tabs";
 import { TimeZoneCookie } from "@/components/bijou/time-zone-cookie";
+import { ToastProvider } from "@/components/bijou/toasts";
 import { Brand, HeaderBar, SITE_NAME } from "@/components/system/header";
 import { SignOff } from "@/components/system/motifs";
 import { SystemTheme } from "@/components/system/theme";
@@ -17,7 +18,8 @@ export const metadata: Metadata = {
   description: "Pick this month’s films from what’s in cinemas, the all-time greats, or all of TMDB.",
 };
 
-// Every page sits in the Pulp shell: the masthead with its tab bar, the page, the credits, THE END and the footer.
+// Every page sits in the Pulp shell: the masthead with its tab bar, the page, the credits, THE END and the footer,
+// with the shared Undo/error toast over them.
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={fontVariables}>
@@ -25,26 +27,28 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ClerkProvider>
           <TimeZoneCookie />
           <SystemTheme className="min-h-screen">
-            <HeaderBar
-              brand={
-                <Link href="/" className="flex min-h-11 items-center gap-2.5">
-                  <Brand />
-                </Link>
-              }
-              action={
-                <Suspense fallback={<SiteTabsPending />}>
-                  <SiteNav />
-                </Suspense>
-              }
-            />
-            <main className="mx-auto max-w-7xl px-[5vw]">
-              {children}
-              <Credits />
-            </main>
-            <SignOff />
-            <footer className="ds-footer ds-fine ds-muted mx-auto max-w-7xl px-[5vw] py-8">
-              {SITE_NAME} · Design Build Ship, Week 4
-            </footer>
+            <ToastProvider>
+              <HeaderBar
+                brand={
+                  <Link href="/" className="flex min-h-11 items-center gap-2.5">
+                    <Brand />
+                  </Link>
+                }
+                action={
+                  <Suspense fallback={<SiteTabsPending />}>
+                    <SiteNav />
+                  </Suspense>
+                }
+              />
+              <main className="mx-auto max-w-7xl px-[5vw]">
+                {children}
+                <Credits />
+              </main>
+              <SignOff />
+              <footer className="ds-footer ds-fine ds-muted mx-auto max-w-7xl px-[5vw] py-8">
+                {SITE_NAME} · Design Build Ship, Week 4
+              </footer>
+            </ToastProvider>
           </SystemTheme>
         </ClerkProvider>
       </body>

@@ -43,7 +43,9 @@ _Avoid_: "saved list" (there is no month-less list), "status" column, "plan".
 6. **Undo:** every change (save, remove, mark/unmark Watched, add-to-this-month) shows a **3-second** Undo toast. The
    UI updates optimistically; a failed write rolls back and shows an error toast. Undo writes the previous state back:
    - save / add-to-this-month → delete that Entry;
-   - remove → re-insert the exact deleted row (same `id`, `added_at`, `watched_at`), kept in the browser for 3 s;
+   - remove → re-insert the exact deleted row (same `id`, `added_at`, `watched_at`), kept in the browser for 3 s as a
+     copy signed by the server (HMAC with the server-only `UNDO_SIGNING_SECRET`, bound to the user and a short expiry);
+     the server verifies it before re-inserting, so the browser can't forge an Entry;
    - mark / unmark Watched → restore the previous `watched_at`.
 7. **Signed-out visitors** can browse and search. Save opens Clerk's sign-in modal and, after sign-in, saves that
    Film automatically. `/my-list` requires sign-in (checked on the server).
@@ -85,7 +87,8 @@ create index movie_list_entries_user_month on public.movie_list_entries (user_id
 - **Months are `date` on the first of the month**, compared natively (`month < '2026-11-01'`).
 - **Genres** are stored as TMDB ids; names come from TMDB `GET /3/genre/movie/list` (cached), not the database.
 - **Snapshot fields come from TMDB on the server**, never from the request body — the client sends only `tmdb_id`
-  (or, for Add it to this month, the source Entry's `id`).
+  (or, for Add it to this month, the source Entry's `id`; for Undo of Remove, the server-signed copy of the deleted
+  row).
 
 ### Row-level security
 
@@ -191,7 +194,8 @@ attribution and its required notice in the credits.
   only the Pulp pieces ported from Week 2 (`components/system/` Pulp parts, `pulp/`, `system.css`, fonts, genre art,
   TMDB logo and credits).
 - Env: `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, `CLERK_SECRET_KEY`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`
-  (server-only — no `NEXT_PUBLIC_`), `TMDB_READ_ACCESS_TOKEN` (v4 Bearer). `.env.example` lists them without values.
+  (server-only — no `NEXT_PUBLIC_`), `TMDB_READ_ACCESS_TOKEN` (v4 Bearer), `UNDO_SIGNING_SECRET` (server-only).
+  `.env.example` lists them without values.
 - Vercel imports the GitHub repo: `main` deploys to production, each PR gets a preview. The owner sets env vars there.
 - One feature branch + PR per ticket, merged after tests pass and the preview looks right. The tickets are the
   sub-issues of spec #1 on GitHub, with native blocked-by links; work any ticket whose blockers are all closed.

@@ -85,9 +85,11 @@ export function Toggle({ label, checked, onToggle }: { label: string; checked: b
   );
 }
 
-export function Toast({ children, action }: { children: React.ReactNode; action?: React.ReactNode }) {
+// The toast's caption. It sits inside a live region (role status or alert) that is on the page before it appears,
+// so screen readers announce it.
+export function Toast({ children, action, tone = "notice" }: { children: React.ReactNode; action?: React.ReactNode; tone?: "notice" | "error" }) {
   return (
-    <div role="status" className="ds-toast ds-body">
+    <div data-tone={tone} className="ds-toast ds-body">
       <span>{children}</span>
       {action}
     </div>

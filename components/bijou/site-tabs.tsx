@@ -3,9 +3,12 @@ import { SignInButton, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { buttonClass } from "@/components/system/controls";
+import { useToasts } from "./toasts";
 
-export function SiteTabs({ signedIn, month }: { signedIn: boolean; month: string | null }) {
+// `count` is this month's Entries as the server last counted them; a change in flight moves it at once.
+export function SiteTabs({ signedIn, month, count }: { signedIn: boolean; month: string | null; count: number | null }) {
   const path = usePathname();
+  const { countMoved } = useToasts();
   const onMyList = path.startsWith("/my-list");
   return (
     <div className="flex flex-wrap items-center justify-end gap-3">
@@ -13,7 +16,7 @@ export function SiteTabs({ signedIn, month }: { signedIn: boolean; month: string
         <Link href="/" aria-current={path === "/" ? "page" : undefined} className={buttonClass("secondary")}>Browse</Link>
         {signedIn && (
           <Link href="/my-list" aria-current={onMyList ? "page" : undefined} className={buttonClass("secondary")}>
-            My List · {month}
+            My List · {month}{count !== null && ` (${count + countMoved})`}
           </Link>
         )}
       </nav>
